@@ -42,7 +42,7 @@ namespace SmartPostOffice.Models
 
         [Required(ErrorMessage = "Estimated weight is required")]
         [Range(1, 50000, ErrorMessage = "Weight must be between 1 and 50,000 grams")]
-        [Display(Name = "Estimated Weight")]
+        [Display(Name = "Estimated Weight(g)")]
 
         public decimal EstimatedWeightGrams { get; set; }
 
