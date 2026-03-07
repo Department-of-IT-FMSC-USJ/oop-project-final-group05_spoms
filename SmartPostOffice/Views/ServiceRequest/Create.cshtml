@@ -1,0 +1,243 @@
+@model SmartPostOffice.Models.ServiceRequest
+@using SmartPostOffice.Models.Enums
+@{
+    ViewData["Title"] = "Request a Service";
+    string current = ViewBag.ServiceType ?? "OrdinaryLetter";
+    bool isCOD = current == "COD";
+}
+
+<div class="page-banner mt-2">
+    <h1><i class="bi bi-envelope-plus-fill me-2"></i>Request a Postal Service</h1>
+    <p>Fill in the details below. You will receive a unique reference number on submission.</p>
+    <span class="banner-icon"><i class="bi bi-mailbox2"></i></span>
+</div>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @(current == "OrdinaryLetter" ? "active" : "")"
+               href="/ServiceRequest/Create?serviceType=OrdinaryLetter">
+            <i class="bi bi-envelope me-1"></i>Ordinary Letter
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(current == "OrdinaryParcel" ? "active" : "")"
+               href="/ServiceRequest/Create?serviceType=OrdinaryParcel">
+            <i class="bi bi-box-seam me-1"></i>Ordinary Parcel
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(current == "SpeedPost" ? "active" : "")"
+               href="/ServiceRequest/Create?serviceType=SpeedPost">
+            <i class="bi bi-lightning-fill me-1"></i>Speed Post
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(current == "RegisteredMail" ? "active" : "")"
+               href="/ServiceRequest/Create?serviceType=RegisteredMail">
+            <i class="bi bi-patch-check me-1"></i>Registered Mail
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(current == "COD" ? "active" : "")" href="/ServiceRequest/Create?serviceType=COD">
+            <i class="bi bi-cash-coin me-1"></i>COD
+        </a>
+    </li>
+</ul>
+
+<form asp-action="Create" asp-controller="ServiceRequest" method="post">
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ServiceType" value="@Model.ServiceType" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" style="display:none"></div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header navy">
+                    <i class="bi bi-box-arrow-up"></i>
+                    @(isCOD ? "Seller Details" : "Sender Details")
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="SenderName" class="form-label">
+                            @(isCOD ? "Seller Name" : "Sender Name") <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <input asp-for="SenderName" class="form-control" placeholder="Full name" />
+                        <span asp-validation-for="SenderName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SenderPhone" class="form-label">
+                            Phone Number <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+                            <input asp-for="SenderPhone" class="form-control" placeholder="07X-XXXXXXX" />
+                        </div>
+                        <span asp-validation-for="SenderPhone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SenderAddress" class="form-label">
+                            Postal Address <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <textarea asp-for="SenderAddress" class="form-control" rows="3"
+                                  placeholder="Full postal address including town and postcode"></textarea>
+                        <span asp-validation-for="SenderAddress" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header red">
+                    <i class="bi bi-box-arrow-in-down"></i>
+                    @(isCOD ? "Buyer Details" : "Receiver Details")
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="ReceiverName" class="form-label">
+                            @(isCOD ? "Buyer Name" : "Receiver Name") <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <input asp-for="ReceiverName" class="form-control" placeholder="Full name" />
+                        <span asp-validation-for="ReceiverName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ReceiverPhone" class="form-label">
+                            Phone Number <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+                            <input asp-for="ReceiverPhone" class="form-control" placeholder="07X-XXXXXXX" />
+                        </div>
+                        <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ReceiverAddress" class="form-label">
+                            @(isCOD ? "Delivery Address" : "Postal Address") <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <textarea asp-for="ReceiverAddress" class="form-control" rows="3"
+                                  placeholder="Full postal address including town and postcode"></textarea>
+                        <span asp-validation-for="ReceiverAddress" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header gold">
+            <i class="bi bi-clipboard2-data-fill"></i> Service Details
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Service Type</label>
+                    <input type="text" class="form-control" value="@Model.ServiceType" readonly
+                           style="background:var(--sl-bg); font-weight:600; color:var(--sl-red);" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="EstimatedWeightGrams" class="form-label">
+                        Estimated Weight(g) <span style="color:var(--sl-red)">*</span>
+                    </label>
+                    <input asp-for="EstimatedWeightGrams" class="form-control" placeholder="e.g. 250" step="1" min="1"
+                           max="50000" />
+                    <span asp-validation-for="EstimatedWeightGrams" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Destination" class="form-label">
+                        Destination <span style="color:var(--sl-red)">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                        <input asp-for="Destination" class="form-control" placeholder="e.g., Kandy, Jaffna" />
+                    </div>
+                    <span asp-validation-for="Destination" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isCOD)
+    {
+        <div class="card mt-4" style="border: 2px solid var(--sl-gold);">
+            <div class="card-header" style="background: var(--sl-gold); color: var(--sl-navy);">
+                <i class="bi bi-cash-coin me-1"></i>
+                COD Payment Details
+                <span class="ms-2" style="font-size:12px; font-weight:400; opacity:0.75;">
+                    — Cash on Delivery specific information
+                </span>
+            </div>
+            <div class="card-body">
+
+                <div class="alert alert-warning d-flex gap-2 align-items-start mb-4" style="font-size:13px;">
+                    <i class="bi bi-info-circle-fill mt-1 flex-shrink-0" style="color:var(--sl-gold);"></i>
+                    <div>
+                        The post office will collect <strong>Postage Charge + Your Profit Amount</strong>
+                        from the buyer upon delivery.<br />
+                        <span style="opacity:0.8;">
+                            Example: If postage = Rs.500 and your profit = Rs.300,
+                            the buyer pays <strong>Rs.800</strong> total.
+                            The postage charge is calculated by the officer based on weight and destination.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="ItemDescription" class="form-label">
+                            Item Description <span style="color:var(--sl-red)">*</span>
+                        </label>
+                        <textarea asp-for="ItemDescription" class="form-control" rows="3"
+                                  placeholder="e.g., Blue T-Shirt Size M, Mobile Phone Cover, Handmade Bag"></textarea>
+                        <span asp-validation-for="ItemDescription" class="text-danger small"></span>
+                        <div class="text-muted mt-1" style="font-size:12px;">
+                            <i class="bi bi-info-circle me-1"></i>Helps the post office identify your parcel
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row g-3">
+
+                            <div class="col-12">
+                                <label asp-for="SellerProfitAmount" class="form-label">
+                                    Your Profit Amount <span style="color:var(--sl-red)">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text fw-bold">Rs.</span>
+                                    <input asp-for="SellerProfitAmount" class="form-control" placeholder="300.00"
+                                           step="0.01" min="0" id="profitInput" />
+                                </div>
+                                <span asp-validation-for="SellerProfitAmount" class="text-danger small"></span>
+                                <div class="text-muted mt-1" style="font-size:12px;">
+                                    <i class="bi bi-info-circle me-1"></i>Amount you want to receive from the buyer
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <div class="d-flex gap-3 mt-4 mb-4">
+        <button type="submit" class="btn btn-primary btn-lg px-5">
+            <i class="bi bi-send-fill me-2"></i>Submit Request
+        </button>
+        <a href="/" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-x-circle me-1"></i>Cancel
+        </a>
+    </div>
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
