@@ -1,6 +1,6 @@
 // Program.cs
-//using Microsoft.EntityFrameworkCore;
-//using SmartPostOffice.Data;
+using Microsoft.EntityFrameworkCore;
+using SmartPostOffice.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // 2. Add Database Context
-//    This INJECTS our PostOfficeDbContext into any class that needs it
-//    The connection string comes from appsettings.json
-//builder.Services.AddDbContext<PostOfficeDbContext>(options =>
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<PostOfficeDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-// Middleware Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
