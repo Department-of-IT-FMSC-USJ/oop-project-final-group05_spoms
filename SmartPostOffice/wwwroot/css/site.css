@@ -1,31 +1,479 @@
-html {
-  font-size: 14px;
+/* ================================================================
+   SMART POST OFFICE MANAGEMENT SYSTEM
+   Sri Lanka Post — Official Theme
+
+   COLOR PALETTE:
+   --sl-red      #C8102E   Sri Lanka Post primary red
+   --sl-navy     #0A2342   Deep navy (header, footer, card headers)
+   --sl-gold     #D4A017   Gold accent (Sri Lankan lion flag)
+   --sl-bg       #F3F5F8   Light grey page background
+   ================================================================ */
+
+/* ── 1. CSS VARIABLES ── */
+:root {
+    --sl-red:         #C8102E;
+    --sl-red-dark:    #9B0C22;
+    --sl-red-light:   #FCEDEF;
+    --sl-navy:        #0A2342;
+    --sl-navy-mid:    #163354;
+    --sl-gold:        #D4A017;
+    --sl-gold-light:  #FDF3D7;
+    --sl-bg:          #F3F5F8;
+    --sl-white:       #FFFFFF;
+    --sl-text:        #1E1E2E;
+    --sl-muted:       #6B7280;
+    --sl-border:      #DDE1E7;
+    --sl-success:     #166534;
+    --sl-success-bg:  #DCFCE7;
+
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body:    'DM Sans', 'Segoe UI', sans-serif;
+
+    --radius:       8px;
+    --radius-lg:    14px;
+    --shadow-sm:    0 1px 4px rgba(0,0,0,0.07);
+    --shadow-md:    0 4px 16px rgba(0,0,0,0.10);
+    --shadow-red:   0 4px 14px rgba(200,16,46,0.22);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
+/* ── 2. BASE ── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
-  margin-bottom: 60px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--sl-text);
+    background-color: var(--sl-bg);
+    margin: 0;
+    padding: 0;
+    line-height: 1.65;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--sl-navy);
+    font-weight: 700;
+    line-height: 1.25;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+a { color: var(--sl-red); }
+a:hover { color: var(--sl-red-dark); }
+
+/* ── 3. TOP UTILITY BAR ── */
+.topbar {
+    background-color: var(--sl-navy);
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 2px solid var(--sl-red);
+    letter-spacing: 0.2px;
+}
+.topbar a { color: rgba(255,255,255,0.65); }
+.topbar a:hover { color: var(--sl-gold); text-decoration: none; }
+.topbar .bi { color: var(--sl-gold); margin-right: 4px; }
+
+/* ── 4. SITE HEADER ── */
+.site-header {
+    background: var(--sl-white);
+    border-bottom: 3px solid var(--sl-red);
+    padding: 14px 0;
+    box-shadow: var(--shadow-sm);
+}
+.brand-mark {
+    width: 54px;
+    height: 54px;
+    background: var(--sl-red);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-red);
+}
+.brand-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--sl-navy);
+    line-height: 1.15;
+}
+.brand-sub { font-size: 11.5px; color: var(--sl-muted); letter-spacing: 0.4px; }
+.brand-link { text-decoration: none; }
+.brand-link:hover .brand-title { color: var(--sl-red); }
+
+.lang-bar {
+    font-size: 12.5px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    color: var(--sl-muted);
+}
+.lang-bar a { color: var(--sl-muted); padding: 2px 5px; border-radius: 4px; }
+.lang-bar a:hover, .lang-bar a.active {
+    color: var(--sl-red);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ── 5. MAIN NAVBAR ── */
+.main-nav {
+    background: var(--sl-red);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(200,16,46,0.30);
+}
+.main-nav .navbar-toggler { border-color: rgba(255,255,255,0.35); margin: 6px 0; }
+.main-nav .navbar-toggler-icon { filter: invert(1); }
+.main-nav .nav-link {
+    color: rgba(255,255,255,0.85) !important;
+    font-weight: 500;
+    font-size: 13.5px;
+    padding: 16px 15px !important;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+.main-nav .nav-link:hover,
+.main-nav .nav-link.active {
+    color: #fff !important;
+    background: var(--sl-red-dark);
+    border-bottom-color: var(--sl-gold);
+    text-decoration: none;
+}
+.nav-search .form-control {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-right: none;
+    color: white;
+    font-size: 13px;
+    border-radius: var(--radius) 0 0 var(--radius);
+    padding: 7px 14px;
+    width: 200px;
+}
+.nav-search .form-control::placeholder { color: rgba(255,255,255,0.55); }
+.nav-search .form-control:focus {
+    background: rgba(255,255,255,0.22);
+    box-shadow: none; outline: none;
+    color: white;
+    border-color: rgba(255,255,255,0.4);
+}
+.nav-search .btn-search {
+    background: var(--sl-red-dark);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-left: none;
+    color: white;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 7px 14px;
+    transition: background 0.2s;
+}
+.nav-search .btn-search:hover { background: var(--sl-navy); }
+
+/* ── 6. MAIN CONTENT ── */
+.main-content { min-height: calc(100vh - 320px); padding: 28px 0 40px; }
+
+/* ── 7. HERO BANNER (Homepage) ── */
+.hero-banner {
+    background: linear-gradient(135deg, var(--sl-navy) 0%, #1a3a5c 100%);
+    color: white;
+    padding: 52px 44px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+}
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(200,16,46,0.12);
+}
+.hero-banner h1 { color: white; font-size: 34px; margin-bottom: 12px; }
+.hero-banner p  { color: rgba(255,255,255,0.72); font-size: 16px; max-width: 520px; margin-bottom: 24px; }
+.hero-badge {
+    display: inline-block;
+    background: var(--sl-gold);
+    color: var(--sl-navy);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+/* ── 8. PAGE BANNER (inner pages) ── */
+.page-banner {
+    background: linear-gradient(135deg, var(--sl-navy) 0%, var(--sl-navy-mid) 100%);
+    color: white;
+    padding: 32px 36px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+}
+.page-banner h1 { color: white; font-size: 24px; margin: 0 0 6px; }
+.page-banner p  { color: rgba(255,255,255,0.65); margin: 0; font-size: 14px; }
+.page-banner .banner-icon {
+    font-size: 64px;
+    opacity: 0.10;
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* ── 9. SERVICE CARDS ── */
+.service-card {
+    background: var(--sl-white);
+    border: 2px solid var(--sl-border);
+    border-radius: var(--radius-lg);
+    padding: 30px 22px;
+    text-align: center;
+    transition: all 0.25s ease;
+    height: 100%;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+.service-card:hover {
+    border-color: var(--sl-red);
+    box-shadow: 0 8px 24px rgba(200,16,46,0.13);
+    transform: translateY(-4px);
+    text-decoration: none;
+    color: inherit;
+}
+.service-card .svc-icon {
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    background: var(--sl-red-light);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    font-size: 28px;
+    transition: all 0.25s;
+}
+.service-card:hover .svc-icon { background: var(--sl-red); color: white; }
+.service-card h5 { font-size: 15.5px; font-weight: 700; margin-bottom: 8px; color: var(--sl-navy); }
+.service-card p  { font-size: 13px; color: var(--sl-muted); margin-bottom: 18px; }
+.svc-btn {
+    display: inline-block;
+    padding: 7px 22px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+.svc-btn.filled { background: var(--sl-red); color: white; border: 2px solid var(--sl-red); }
+.svc-btn.filled:hover { background: var(--sl-red-dark); border-color: var(--sl-red-dark); color: white; text-decoration: none; }
+.svc-btn.outline { background: transparent; border: 2px solid var(--sl-border); color: var(--sl-navy); }
+.service-card:hover .svc-btn.outline { border-color: var(--sl-red); color: var(--sl-red); }
+
+/* ── 10. CARDS ── */
+.card {
+    border: 1px solid var(--sl-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    background: var(--sl-white);
+    overflow: hidden;
+}
+.card-header {
+    padding: 14px 22px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    border: none !important;
+    border-radius: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.card-header.navy  { background: var(--sl-navy);  color: white; }
+.card-header.red   { background: var(--sl-red);   color: white; }
+.card-header.gold  { background: var(--sl-gold);  color: var(--sl-navy); }
+.card-header.light { background: var(--sl-bg); color: var(--sl-navy); border-bottom: 2px solid var(--sl-border) !important; }
+.card-body { padding: 22px; }
+
+/* ── 11. FORMS ── */
+.form-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--sl-navy);
+    margin-bottom: 5px;
+}
+.form-control,
+.form-select {
+    border: 1.5px solid var(--sl-border);
+    border-radius: var(--radius);
+    padding: 9px 13px;
+    font-size: 14px;
+    color: var(--sl-text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--sl-red);
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.10);
+    outline: none;
+}
+.input-group-text {
+    background: var(--sl-bg);
+    border: 1.5px solid var(--sl-border);
+    color: var(--sl-muted);
+    font-size: 13px;
+}
+.form-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--sl-red);
+    border-bottom: 2px solid var(--sl-red-light);
+    padding-bottom: 6px;
+    margin-bottom: 18px;
+}
+
+/* ── 12. BUTTONS (Bootstrap overrides) ── */
+.btn-primary {
+    background-color: var(--sl-red) !important;
+    border-color: var(--sl-red) !important;
+    color: white !important;
+    font-weight: 600;
+    border-radius: var(--radius);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--sl-red-dark) !important;
+    border-color: var(--sl-red-dark) !important;
+    box-shadow: var(--shadow-red) !important;
+}
+.btn-warning {
+    background-color: var(--sl-gold) !important;
+    border-color: var(--sl-gold) !important;
+    color: var(--sl-navy) !important;
+    font-weight: 700;
+    border-radius: var(--radius);
+}
+.btn-warning:hover { background-color: #b8890f !important; border-color: #b8890f !important; }
+.btn-outline-primary {
+    color: var(--sl-red) !important;
+    border-color: var(--sl-red) !important;
+    border-radius: var(--radius);
+    font-weight: 600;
+}
+.btn-outline-primary:hover { background-color: var(--sl-red) !important; color: white !important; }
+.btn-outline-secondary { border-radius: var(--radius); font-weight: 600; }
+.btn-outline-success   { border-radius: var(--radius); font-weight: 600; }
+.btn-lg { padding: 11px 30px; font-size: 15px; }
+
+/* ── 13. NAV TABS ── */
+.nav-tabs { border-bottom: 2px solid var(--sl-border); gap: 4px; }
+.nav-tabs .nav-link {
+    color: var(--sl-muted);
+    border: 2px solid transparent;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: transparent;
+}
+.nav-tabs .nav-link:hover {
+    color: var(--sl-red);
+    border-color: var(--sl-red-light) var(--sl-red-light) transparent;
+    background: var(--sl-red-light);
+    text-decoration: none;
+}
+.nav-tabs .nav-link.active {
+    color: var(--sl-red) !important;
+    background: var(--sl-white);
+    border-color: var(--sl-border) var(--sl-border) var(--sl-white);
+    font-weight: 700;
+}
+
+/* ── 14. STATUS BADGES ── */
+.badge-pending    { background:#FEF3C7; color:#92400E; border:1px solid #FCD34D; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+.badge-processing { background:#DBEAFE; color:#1E40AF; border:1px solid #93C5FD; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+.badge-completed  { background:#DCFCE7; color:#166534; border:1px solid #86EFAC;  padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+.badge-cancelled  { background:#FEE2E2; color:#991B1B; border:1px solid #FCA5A5; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+
+/* ── 15. REFERENCE NUMBER BOX ── */
+.ref-box {
+    background: linear-gradient(135deg, var(--sl-red) 0%, var(--sl-red-dark) 100%);
+    color: white;
+    padding: 36px 32px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 10px 28px rgba(200,16,46,0.28);
+}
+.ref-box .ref-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.75; margin-bottom: 12px; }
+.ref-box .ref-number {
+    font-family: 'Courier New', monospace;
+    font-size: 34px; font-weight: 700;
+    letter-spacing: 5px;
+    background: rgba(255,255,255,0.14);
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: var(--radius);
+    border: 2px dashed rgba(255,255,255,0.35);
+    margin-bottom: 14px;
+}
+.ref-box .ref-note { font-size: 13px; opacity: 0.72; max-width: 360px; margin: 0 auto; }
+
+/* ── 16. TABLES ── */
+.table { font-size: 14px; }
+.table thead th {
+    background: var(--sl-navy);
+    color: white;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    padding: 13px 16px; border: none;
+}
+.table tbody tr { border-bottom: 1px solid var(--sl-border); transition: background 0.15s; }
+.table tbody tr:hover { background: var(--sl-red-light); }
+.table tbody td { padding: 12px 16px; vertical-align: middle; }
+
+/* ── 17. ALERTS ── */
+.alert { border-radius: var(--radius); font-size: 14px; border: none; border-left: 4px solid; }
+.alert-success { background: #DCFCE7; color: #166534; border-left-color: #22C55E; }
+.alert-danger  { background: #FEE2E2; color: #991B1B; border-left-color: var(--sl-red); }
+.alert-warning { background: var(--sl-gold-light); color: #78350F; border-left-color: var(--sl-gold); }
+
+/* ── 18. FOOTER ── */
+.site-footer { background: var(--sl-navy); color: rgba(255,255,255,0.7); margin-top: 48px; }
+.footer-top  { padding: 44px 0 32px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.footer-logo { color: white; font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+.footer-desc { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-top: 10px; }
+.footer-heading { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--sl-gold); margin-bottom: 14px; }
+.footer-links { list-style: none; padding: 0; margin: 0; }
+.footer-links li { margin-bottom: 9px; }
+.footer-links a { color: rgba(255,255,255,0.58); font-size: 13.5px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--sl-gold); text-decoration: none; }
+.footer-contact { list-style: none; padding: 0; margin: 0; }
+.footer-contact li { display: flex; gap: 10px; font-size: 13.5px; color: rgba(255,255,255,0.58); margin-bottom: 10px; align-items: flex-start; }
+.footer-contact li .bi { color: var(--sl-gold); flex-shrink: 0; margin-top: 2px; }
+.footer-bottom { padding: 16px 0; font-size: 12px; color: rgba(255,255,255,0.38); }
+
+/* ── 19. UTILITIES ── */
+.text-sl-red  { color: var(--sl-red)   !important; }
+.text-sl-navy { color: var(--sl-navy)  !important; }
+.text-sl-gold { color: var(--sl-gold)  !important; }
+.divider-red  { border: none; border-top: 2px solid var(--sl-red); opacity: 1; margin: 20px 0; }
+
+
+@media (max-width: 768px) {
+    .topbar .d-flex { flex-direction: column; gap: 3px; font-size: 11px; text-align: center; }
+    .brand-sub      { display: none; }
+    .lang-bar       { display: none !important; }
+    .nav-search     { display: none !important; }
+    .hero-banner    { padding: 32px 20px; }
+    .hero-banner h1 { font-size: 24px; }
+    .ref-box .ref-number { font-size: 22px; letter-spacing: 2px; }
+    .page-banner    { padding: 22px 18px; }
+    .page-banner .banner-icon { display: none; }
 }
