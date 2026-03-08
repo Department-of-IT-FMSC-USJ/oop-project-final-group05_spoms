@@ -13,7 +13,8 @@ builder.Services.AddDbContext<PostOfficeDbContext>(options =>
 
 
 builder.Services.AddAuthentication("OfficerCookies")
-    .AddCookie("OfficerCookies", options => {
+    .AddCookie("OfficerCookies", options =>
+    {
         options.LoginPath = "/Auth/Login";        // redirect if not authenticated
         options.AccessDeniedPath = "/Auth/Login"; // redirect if unauthorised
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
@@ -23,9 +24,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IPostalChargeService, PostalChargeService>();
 
 var app = builder.Build();
-app.UseAuthentication();
-app.UseAuthorization();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -34,9 +32,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();       
+app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "track",
+    pattern: "Track",
+    defaults: new { controller = "Tracking", action = "Track" });
 
 app.MapControllerRoute(
     name: "default",
