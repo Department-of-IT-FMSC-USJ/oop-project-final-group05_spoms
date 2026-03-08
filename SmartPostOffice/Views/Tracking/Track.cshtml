@@ -1,0 +1,78 @@
+@using SmartPostOffice.Models
+@using SmartPostOffice.Models.Enums
+@{ ViewData["Title"] = "Track Your Parcel"; }
+
+<h2 style="color:var(--sl-navy);"><i class="bi bi-geo-alt-fill me-2"></i>Track Your Parcel</h2>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form asp-controller="Tracking" asp-action="Track" method="post">
+      @Html.AntiForgeryToken()
+      <label class="form-label fw-semibold">Enter Reference Number or Tracking Number</label>
+      <div class="input-group">
+        <input type="text" name="trackingInput" class="form-control form-control-lg"
+               placeholder="e.g. SPO-2024-A3F7C2  or  TRK-2024-XXXXXXXX" />
+        <button type="submit" class="btn btn-lg" style="background:var(--sl-navy); color:white;">
+          <i class="bi bi-search me-1"></i>Track
+        </button>
+      </div>
+    </form>
+    @if (ViewBag.Error != null)
+    {
+      <div class="alert alert-danger mt-3">@ViewBag.Error</div>
+    }
+  </div>
+</div>
+
+@if (ViewBag.Request != null)
+{
+  var req = (ServiceRequest)ViewBag.Request;
+  var hist = (List<TrackingHistory>)ViewBag.History;
+  var stages = new[] { RequestStatus.PENDING, RequestStatus.ACCEPTED,
+    RequestStatus.RECEIVED, RequestStatus.IN_TRANSIT,
+    RequestStatus.OUT_FOR_DELIVERY, RequestStatus.DELIVERED };
+  var labels = new[] { "Pending", "Accepted", "Received", "In Transit", "Out for Delivery", "Delivered" };
+  var icons  = new[] { "clock", "check-circle", "building", "truck", "bicycle", "house-check" };
+
+  <div class="card mb-4"><div class="card-body row">
+    <div class="col-md-4"><strong>Ref:</strong> @req.ReferenceNumber</div>
+    <div class="col-md-4"><strong>Service:</strong> @req.ServiceType</div>
+    <div class="col-md-4"><strong>Status:</strong>
+      <span class="badge bg-primary">@req.Status</span>
+    </div>
+  </div>
+  </div>
+
+  <div class="card"><div class="card-body">
+    <h5 class="mb-4">Parcel Journey</h5>
+    <div class="d-flex justify-content-between position-relative" style="overflow-x:auto;">
+      @for (int i = 0; i < stages.Length; i++)
+      {
+        var stage = stages[i];
+        var histEntry = hist.FirstOrDefault(h => h.Status == stage);
+        bool isCompleted = hist.Any(h => h.Status == stage);
+        bool isCurrent   = req.Status == stage;
+        string color = isCompleted ? "var(--sl-navy)" : "#ccc";
+        <div class="text-center" style="min-width:120px; flex:1;">
+          <div style="font-size:2rem; color:@color;">
+            <i class="bi bi-@icons[i]-fill"></i>
+          </div>
+          <div class="fw-semibold small" style="color:@color;">@labels[i]</div>
+          @if (histEntry != null)
+          {
+            <div class="text-muted" style="font-size:11px;">@histEntry.UpdatedAt.ToString("dd MMM HH:mm")</div>
+          }
+          @if (isCurrent)
+          {
+            <span class="badge bg-success mt-1">Current</span>
+          }
+        </div>
+        @if (i < stages.Length - 1)
+        {
+          <div style="flex:1; height:2px; background:@color; margin-top:18px;"></div>
+        }
+      }
+    </div>
+  </div>
+  </div>
+}
