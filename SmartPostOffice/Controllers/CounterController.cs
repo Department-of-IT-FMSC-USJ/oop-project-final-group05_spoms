@@ -100,4 +100,46 @@ public class CounterController : Controller
         if (transaction == null) return NotFound();
         return View(transaction);
     }
+    [HttpGet]
+    public IActionResult WalkIn() => View(new ServiceRequest());
+
+    // WALK-IN process
+    [HttpPost]
+    public async Task<IActionResult> WalkIn(ServiceRequest model, decimal actualWeightGrams, string paymentMethod)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        int officerId = int.Parse(User.FindFirst("OfficerId")!.Value);
+
+        string refNum      = $"SPO-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
+        string trackingNum = $"TRK-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
+        string receiptNum  = $"RCP-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
+
+        model.ReferenceNumber = refNum;
+        model.Status    = RequestStatus.ACCEPTED;  
+        model.CreatedAt = DateTime.Now;
+        _db.ServiceRequests.Add(model);
+        await _db.SaveChangesAsync();
+        
+        decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
+
+        var transaction = new Transaction {
+            ServiceRequestId   = model.Id,
+            TrackingNumber     = trackingNum,
+            ActualWeightGrams  = actualWeightGrams,
+            FinalCharge        = charge,
+            PaymentMethod      = paymentMethod,
+            ProcessedByOfficerId = officerId,
+            ReceiptNumber      = receiptNum
+        };
+        _db.Transactions.Add(transaction);
+        _db.TrackingHistory.Add(new TrackingHistory {
+            ServiceRequestId   = model.Id,
+            Status             = RequestStatus.ACCEPTED,
+            UpdatedByOfficerId = officerId
+        });
+        await _db.SaveChangesAsync();
+        return RedirectToAction("Receipt", new { transactionId = transaction.Id });
+    }
+
 }
