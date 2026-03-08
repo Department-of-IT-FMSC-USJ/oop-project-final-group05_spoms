@@ -1,3 +1,5 @@
+using SmartPostOffice.Models.Enums;
+
 namespace SmartPostOffice.Services
 {
     public class PostalChargeService : IPostalChargeService
