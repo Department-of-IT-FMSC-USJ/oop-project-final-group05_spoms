@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using SmartPostOffice.Services;
-
+using SmartPostOffice.Data;
+using SmartPostOffice.Models;
+using SmartPostOffice.Models.Enums;
 [Authorize(AuthenticationSchemes = "OfficerCookies")]
 public class CounterController : Controller
 {
