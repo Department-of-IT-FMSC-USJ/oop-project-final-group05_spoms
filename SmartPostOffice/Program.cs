@@ -11,7 +11,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PostOfficeDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddAuthentication("OfficerCookies")
+    .AddCookie("OfficerCookies", options => {
+        options.LoginPath = "/Auth/Login";        // redirect if not authenticated
+        options.AccessDeniedPath = "/Auth/Login"; // redirect if unauthorised
+        options.ExpireTimeSpan = TimeSpan.FromHours(8); // 8-hour session
+    });
+builder.Services.AddAuthorization();
+
+
+
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 if (!app.Environment.IsDevelopment())
 {
