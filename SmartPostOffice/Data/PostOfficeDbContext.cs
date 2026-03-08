@@ -22,5 +22,7 @@ namespace SmartPostOffice.Data
         }
         public DbSet<PostOfficeOfficer> Officers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-    }
+        public DbSet<TrackingHistory> TrackingHistory { get; set; }
+
+       }
 }
