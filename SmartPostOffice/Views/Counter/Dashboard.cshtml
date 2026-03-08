@@ -1,0 +1,48 @@
+@{ ViewData["Title"] = "Officer Dashboard"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 style="color:var(--sl-navy);"><i class="bi bi-speedometer2 me-2"></i>Officer Dashboard</h2>
+    <p class="text-muted mb-0">Welcome, <strong>@User.Identity?.Name</strong></p>
+  </div>
+  <span class="badge bg-success fs-6">Online</span>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card text-center p-3" style="border-top:4px solid var(--sl-red);">
+      <div style="font-size:2.5rem; color:var(--sl-red);">@ViewBag.PendingCount</div>
+      <div class="fw-semibold">Pending Requests</div>
+      <small class="text-muted">Awaiting counter processing</small>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3" style="border-top:4px solid var(--sl-navy);">
+      <div style="font-size:2.5rem; color:var(--sl-navy);">@ViewBag.TodayCount</div>
+      <div class="fw-semibold">Today's Transactions</div>
+      <small class="text-muted">Processed today</small>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3" style="border-top:4px solid var(--sl-gold);">
+      <div style="font-size:2.5rem;">📮</div>
+      <div class="fw-semibold">SPOMS</div>
+      <small class="text-muted">Smart Post Office System</small>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <a asp-controller="Counter" asp-action="ProcessRequest"
+       class="btn btn-lg w-100" style="background:var(--sl-navy); color:white;">
+      <i class="bi bi-clipboard-check-fill me-2"></i>Process Service Request
+    </a>
+  </div>
+  <div class="col-md-6">
+    <a asp-controller="Counter" asp-action="WalkIn"
+       class="btn btn-lg w-100" style="background:var(--sl-red); color:white;">
+      <i class="bi bi-person-walking me-2"></i>Walk-in Direct Service
+    </a>
+  </div>
+</div>
