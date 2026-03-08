@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using SmartPostOffice.Data;
+using SmartPostOffice.Models;
+
 
 public class AuthController : Controller
 {
