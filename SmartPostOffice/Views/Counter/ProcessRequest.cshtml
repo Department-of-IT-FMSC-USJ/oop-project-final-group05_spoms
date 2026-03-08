@@ -1,0 +1,26 @@
+@model SmartPostOffice.Models.ServiceRequest
+@{ ViewData["Title"] = "Process Service Request"; }
+
+<h2 style="color:var(--sl-navy);">Process Service Request</h2>
+
+@if (ViewBag.Error != null)
+{
+  <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>@ViewBag.Error</div>
+}
+
+
+<div class="card mb-4">
+  <div class="card-header navy"><i class="bi bi-search me-2"></i>Search by Reference Number</div>
+  <div class="card-body">
+    <form asp-controller="Counter" asp-action="ProcessRequest" method="post">
+      @Html.AntiForgeryToken()
+      <div class="input-group">
+        <input type="text" name="referenceNumber" class="form-control form-control-lg"
+               placeholder="e.g. SPO-2024-A3F7C2" required />
+        <button type="submit" class="btn btn-lg" style="background:var(--sl-navy); color:white;">
+          <i class="bi bi-search me-1"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
