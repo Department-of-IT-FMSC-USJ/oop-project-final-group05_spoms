@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Track">
+                        <a class="nav-link" asp-controller="Tracking" asp-action="Track">
                             <i class="bi bi-geo-alt-fill me-1"></i>Track Services
                         </a>
                     </li>
@@ -76,7 +76,7 @@
                             <i class="bi bi-bookmark-fill me-1"></i>Book Stamps
                         </a>
                     </li>
-                </ul>
+                
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <li class="nav-item">
@@ -94,6 +94,10 @@
                         <i class="bi bi-person-walking me-1"></i>Walk-in
                         </a>
                     </li>
+                    }
+                    </ul>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
                     <span class="navbar-text me-3 fw-semibold" style="color:var(--sl-gold);">
                         <i class="bi bi-person-badge-fill me-1"></i>@User.Identity.Name
                     </span>
@@ -108,8 +112,7 @@
                         <i class="bi bi-person-badge-fill me-1"></i>Officer Login
                     </a>
                 }
-
-
+                
             </div>
         </div>
     </nav>
