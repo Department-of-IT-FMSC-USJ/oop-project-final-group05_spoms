@@ -1,6 +1,6 @@
-// Program.cs
 using Microsoft.EntityFrameworkCore;
 using SmartPostOffice.Data;
+using SmartPostOffice.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +16,11 @@ builder.Services.AddAuthentication("OfficerCookies")
     .AddCookie("OfficerCookies", options => {
         options.LoginPath = "/Auth/Login";        // redirect if not authenticated
         options.AccessDeniedPath = "/Auth/Login"; // redirect if unauthorised
-        options.ExpireTimeSpan = TimeSpan.FromHours(8); // 8-hour session
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 builder.Services.AddAuthorization();
 
-
+builder.Services.AddScoped<IPostalChargeService, PostalChargeService>();
 
 var app = builder.Build();
 app.UseAuthentication();
