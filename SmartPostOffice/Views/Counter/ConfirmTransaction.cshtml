@@ -1,0 +1,116 @@
+@model SmartPostOffice.Models.ServiceRequest
+@{ ViewData["Title"] = "Confirm Transaction"; }
+
+<h2 style="color:var(--sl-navy);">Confirm Transaction</h2>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header navy">Sender Details</div>
+      <div class="card-body">
+        <p><strong>Name:</strong> @Model.SenderName</p>
+        <p><strong>Phone:</strong> @Model.SenderPhone</p>
+        <p class="mb-0"><strong>Address:</strong> @Model.SenderAddress</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header navy">Receiver Details</div>
+      <div class="card-body">
+        <p><strong>Name:</strong> @Model.ReceiverName</p>
+        <p><strong>Phone:</strong> @Model.ReceiverPhone</p>
+        <p class="mb-0"><strong>Address:</strong> @Model.ReceiverAddress</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header navy">Service Info</div>
+  <div class="card-body row">
+    <div class="col-md-4"><strong>Service Type:</strong> @Model.ServiceType</div>
+    <div class="col-md-4"><strong>Destination:</strong> @Model.Destination</div>
+    <div class="col-md-4"><strong>Est. Weight:</strong> @Model.EstimatedWeightGrams g</div>
+  </div>
+</div>
+ 
+@if (Model.ServiceType == SmartPostOffice.Models.Enums.ServiceType.COD)
+{
+  <div class="alert alert-info mt-3">
+    <strong>COD Details:</strong> Item: @Model.ItemDescription |
+    Seller Profit: Rs. @Model.SellerProfitAmount
+  </div>
+}
+ 
+<form asp-controller="Counter" asp-action="ConfirmTransaction" method="post" class="mt-4">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="serviceRequestId" value="@Model.Id" />
+
+  <div class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Actual Weight (grams)</label>
+      <input type="number" id="actualWeight" name="actualWeightGrams"
+             class="form-control form-control-lg" min="1" max="40000" required />
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3 text-center" style="background:#f0f4ff;">
+        <div class="text-muted small">Calculated Charge</div>
+        <div id="chargeDisplay" style="font-size:1.8rem; font-weight:700; color:var(--sl-navy);">Rs. —</div>
+        @if (Model.ServiceType == SmartPostOffice.Models.Enums.ServiceType.COD)
+        {
+          <div class="text-muted small mt-1">Total COD (buyer pays): <span id="codDisplay">Rs. —</span></div>
+        }
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Payment Method</label>
+      <div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="paymentMethod" value="Cash" checked />
+          <label class="form-check-label">Cash</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="paymentMethod" value="Online" />
+          <label class="form-check-label">Online</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success btn-lg mt-4">
+    <i class="bi bi-check-circle-fill me-2"></i>Confirm Transaction
+  </button>
+</form>
+
+@section Scripts {
+<script>
+const serviceType = '@Model.ServiceType';
+const sellerProfit = @(Model.SellerProfitAmount ?? 0);
+
+function getRates() {
+  const ordinary  = [[0,20,50],[20,30,60],[30,40,70],[40,50,80],[50,60,90],[60,70,100],[70,80,110],[80,90,120],[90,100,130],[100,150,150],[150,200,170],[200,250,190],[250,300,210],[300,350,230],[350,400,250],[400,450,270],[450,500,290],[500,550,310],[550,600,330],[600,650,350],[650,700,370],[700,750,390],[750,800,410],[800,850,430],[850,900,450],[900,950,470],[950,1000,490],[1000,1250,520],[1250,1500,550],[1500,1750,580],[1750,2000,610]];
+  const registered = [[0,20,110],[20,30,120],[30,40,130],[40,50,140],[50,60,150],[60,70,160],[70,80,170],[80,90,180],[90,100,190],[100,150,210],[150,200,230],[200,250,250],[250,300,270],[300,350,290],[350,400,310],[400,450,330],[450,500,350],[500,550,370],[550,600,390],[600,650,410],[650,700,430],[700,750,450],[750,800,470],[800,850,490],[850,900,510],[900,950,530],[950,1000,550],[1000,1250,580],[1250,1500,610],[1500,1750,640],[1750,2000,670],[2000,3000,720],[3000,4000,770],[4000,5000,820]];
+  const courier   = [[0,250,200],[250,500,250],[500,1000,350],[1000,2000,400],[2000,3000,450],[3000,4000,500],[4000,5000,550],[5000,6000,600],[6000,7000,650],[7000,8000,700],[8000,9000,750],[9000,10000,800],[10000,15000,950],[15000,20000,1100],[20000,25000,1600],[25000,30000,2100],[30000,35000,2600],[35000,40000,3100]];
+  const parcel    = [[0,250,150],[250,500,200],[500,1000,250],[1000,2000,300],[2000,3000,350],[3000,4000,400],[4000,5000,450],[5000,6000,500],[6000,7000,550],[7000,8000,600],[8000,9000,650],[9000,10000,700],[10000,15000,800],[15000,20000,900]];
+  const map = { OrdinaryLetter: ordinary, RegisteredMail: registered, SpeedPost: courier, OrdinaryParcel: parcel, COD: parcel };
+  return map[serviceType] || ordinary;
+}
+
+function calcCharge(w) {
+  for (const [min,max,charge] of getRates())
+    if (w > min && w <= max) return charge;
+  const r = getRates(); return r[r.length-1][2];
+}
+
+document.getElementById('actualWeight').addEventListener('input', function() {
+  const w = parseFloat(this.value);
+  if (!isNaN(w) && w > 0) {
+    const charge = calcCharge(w);
+    document.getElementById('chargeDisplay').textContent = 'Rs. ' + charge;
+    const codEl = document.getElementById('codDisplay');
+    if (codEl) codEl.textContent = 'Rs. ' + (charge + sellerProfit);
+  }
+});
+</script>
+}
