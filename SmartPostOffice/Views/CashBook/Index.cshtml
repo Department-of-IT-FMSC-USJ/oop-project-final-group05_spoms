@@ -117,7 +117,57 @@
                 <p class="text-muted p-3 mb-0">No transactions today for this register.</p>
             }
 
+            <div class="p-3 border-top">
+                @if ((bool)summary.IsClosed)
+                {
+                    var b = summary.Balance;
+                    string cls = b.Status == "BALANCED" ? "alert-success" : "alert-warning";
+                    <div class="alert @cls mb-0 py-2">
+                        <strong>Closed.</strong>
+                        System Cash: LKR @b.SystemCashTotal.ToString("N2") |
+                        Physical: LKR @b.PhysicalCashCounted.ToString("N2") |
+                        @if (b.Status == "BALANCED")
+                        {
+                            <span>✅ Balanced</span>
+                        }
+                        else
+                        {
 
+                            <span>⚠️ Discrepancy: LKR @Math.Abs(b.Discrepancy).ToString("N2")</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <form asp-action="CloseRegister" asp-controller="CashBook" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="serviceType" value="@((int)summary.ServiceType)" />
+                        <div class="row align-items-end g-2">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold small">
+                                    Physical Cash in @summary.RegisterName Till (LKR)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">LKR</span>
+                                    <input type="number" step="0.01" name="physicalCashCounted"                     class="form-control" required
+                                           placeholder="Count this register's till" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="bi bi-lock me-1"></i>Close Register
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted">
+                                    System Cash for this register:
+                                    <strong>LKR @((decimal)summary.CashTotal).ToString("N2")</strong>
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
 
         </div>
     </div>
