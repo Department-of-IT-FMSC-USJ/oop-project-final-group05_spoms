@@ -12,19 +12,32 @@ public class CounterController : Controller
     private readonly PostOfficeDbContext _db;
     private readonly IPostalChargeService _chargeService;
 
-        public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService)
+    public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService)
     { _db = db; _chargeService = chargeService; }
 
-    public IActionResult Dashboard()
+
+    public async Task<IActionResult> Dashboard()
     {
-        ViewBag.PendingCount = _db.ServiceRequests
-            .Count(r => r.Status == RequestStatus.PENDING);
-        ViewBag.TodayCount = _db.Transactions
-            .Count(t => t.TransactionDate.Date == DateTime.Today);
+        ViewBag.PendingCount = await _db.ServiceRequests
+            .CountAsync(r => r.Status == RequestStatus.PENDING);
+
+        ViewBag.TodayCount = await _db.Transactions
+            .CountAsync(t => t.TransactionDate.Date == DateTime.Today);
+
+        ViewBag.TodayCashTotal = await _db.Transactions
+    .Where(t => t.TransactionDate.Date == DateTime.Today
+             && t.PaymentMethod == "Cash")
+    .SumAsync(t => (decimal?)t.FinalCharge) ?? 0m;
+
+        ViewBag.TodayOnlineTotal = await _db.Transactions
+            .Where(t => t.TransactionDate.Date == DateTime.Today
+                     && t.PaymentMethod == "Online")
+                             .SumAsync(t => (decimal?)t.FinalCharge) ?? 0m;
+
         return View();
     }
 
- 
+
     [HttpGet]
     public IActionResult ProcessRequest() => View();
 
@@ -95,7 +108,7 @@ public class CounterController : Controller
     public IActionResult Receipt(int transactionId)
     {
         var transaction = _db.Transactions
-            .Include(t => t.ServiceRequest) 
+            .Include(t => t.ServiceRequest)
             .FirstOrDefault(t => t.Id == transactionId);
         if (transaction == null) return NotFound();
         return View(transaction);
@@ -111,31 +124,33 @@ public class CounterController : Controller
 
         int officerId = int.Parse(User.FindFirst("OfficerId")!.Value);
 
-        string refNum      = $"SPO-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
+        string refNum = $"SPO-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
         string trackingNum = $"TRK-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
-        string receiptNum  = $"RCP-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
+        string receiptNum = $"RCP-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
 
         model.ReferenceNumber = refNum;
-        model.Status    = RequestStatus.ACCEPTED;  
+        model.Status = RequestStatus.ACCEPTED;
         model.CreatedAt = DateTime.Now;
         _db.ServiceRequests.Add(model);
         await _db.SaveChangesAsync();
-        
+
         decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
 
-        var transaction = new Transaction {
-            ServiceRequestId   = model.Id,
-            TrackingNumber     = trackingNum,
-            ActualWeightGrams  = actualWeightGrams,
-            FinalCharge        = charge,
-            PaymentMethod      = paymentMethod,
+        var transaction = new Transaction
+        {
+            ServiceRequestId = model.Id,
+            TrackingNumber = trackingNum,
+            ActualWeightGrams = actualWeightGrams,
+            FinalCharge = charge,
+            PaymentMethod = paymentMethod,
             ProcessedByOfficerId = officerId,
-            ReceiptNumber      = receiptNum
+            ReceiptNumber = receiptNum
         };
         _db.Transactions.Add(transaction);
-        _db.TrackingHistory.Add(new TrackingHistory {
-            ServiceRequestId   = model.Id,
-            Status             = RequestStatus.ACCEPTED,
+        _db.TrackingHistory.Add(new TrackingHistory
+        {
+            ServiceRequestId = model.Id,
+            Status = RequestStatus.ACCEPTED,
             UpdatedByOfficerId = officerId
         });
         await _db.SaveChangesAsync();
