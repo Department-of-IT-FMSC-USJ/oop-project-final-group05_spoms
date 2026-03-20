@@ -82,8 +82,7 @@
             @foreach (var b in discrepancies)
             {
                 <li>
-                    @SmartPostOffice.Controllers.CashBookController.GetRegisterName(
-                        (SmartPostOffice.Models.Enums.ServiceType)b.ServiceType):
+                    @CashBookController.GetRegisterName((SmartPostOffice.Models.Enums.ServiceType)b.ServiceType)
                     System LKR @b.SystemCashTotal.ToString("N2") vs
                     Physical LKR @b.PhysicalCashCounted.ToString("N2") =
                     <strong>LKR @Math.Abs(b.Discrepancy).ToString("N2") difference</strong>
