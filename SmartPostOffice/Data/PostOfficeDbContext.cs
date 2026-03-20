@@ -19,10 +19,19 @@ namespace SmartPostOffice.Data
             modelBuilder.Entity<ServiceRequest>()
                 .Property(s => s.Status)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<CashBookEntry>()
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<OrdinaryLetterEntry>("OrdinaryLetterEntry")
+                .HasValue<RegisteredMailEntry>("RegisteredMailEntry")
+                .HasValue<SpeedPostEntry>("SpeedPostEntry")
+                .HasValue<OrdinaryParcelEntry>("OrdinaryParcelEntry")
+                .HasValue<CODEntry>("CODEntry");
         }
         public DbSet<PostOfficeOfficer> Officers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<TrackingHistory> TrackingHistory { get; set; }
+        public DbSet<CashBookEntry> CashBookEntries { get; set; }
 
-       }
+    }
 }
