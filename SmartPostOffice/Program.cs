@@ -22,6 +22,7 @@ builder.Services.AddAuthentication("OfficerCookies")
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IPostalChargeService, PostalChargeService>();
+builder.Services.AddScoped<ICashBookRepository, CashBookRepository>();
 
 var app = builder.Build();
 
