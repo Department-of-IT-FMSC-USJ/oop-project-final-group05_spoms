@@ -1,0 +1,124 @@
+@model List<SmartPostOffice.Models.CashBookEntry>
+@using SmartPostOffice.Models
+@using SmartPostOffice.Models.Enums
+@{
+    ViewData["Title"] = "Cash Book — " + ViewBag.Today;
+    var summaries = (IEnumerable<dynamic>)ViewBag.Summaries;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="color:var(--sl-navy);">
+            <i class="bi bi-journal-text me-2"></i>Cash Book — @ViewBag.Today
+        </h2>
+        <p class="text-muted mb-0">Five service-type registers. Close each register separately.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="DailyReport" class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-bar-graph me-1"></i>Daily Report
+        </a>
+        <a asp-action="History" class="btn btn-outline-secondary">
+            <i class="bi bi-clock-history me-1"></i>History
+        </a>
+    </div>
+</div>
+
+@* ── GRAND TOTAL SUMMARY ── *@
+<div class="card mb-4 p-3" style="border-top:4px solid var(--sl-gold);">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="text-muted small">Total Cash (All Registers)</div>
+            <div style="font-size:1.6rem; font-weight:700; color:#1E7A45;">
+                LKR @summaries.Sum(s => (decimal)s.CashTotal).ToString("N2")
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted small">Total Online (All Registers)</div>
+            <div style="font-size:1.6rem; font-weight:700; color:var(--sl-navy);">
+                LKR @summaries.Sum(s => (decimal)s.OnlineTotal).ToString("N2")
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-muted small">Grand Total</div>
+            <div style="font-size:1.6rem; font-weight:700; color:var(--sl-navy);">
+                LKR @ViewBag.GrandTotal.ToString("N2")
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ── ONE SECTION PER SERVICE TYPE REGISTER ── *@
+@foreach (var summary in summaries)
+{
+    var sectionEntries = Model.Where(
+        e => e.Transaction.ServiceRequest.ServiceType == (ServiceType)summary.ServiceType
+    ).ToList();
+
+    <div class="card mb-4">
+        <div class="card-header" style="background:var(--sl-navy); color:white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@summary.RegisterName</strong>
+                    &nbsp;&nbsp;
+                    <span class="badge bg-success">Cash: LKR @((decimal)summary.CashTotal).ToString("N2")</span>
+                    <span class="badge bg-info ms-1">Online: LKR @((decimal)summary.OnlineTotal).ToString("N2")</span>
+                </div>
+                <div>
+                    <strong>Register Total: LKR @((decimal)summary.Total).ToString("N2")</strong>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+
+            @if (sectionEntries.Any())
+            {
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Reference No.</th>
+                            <th>Payment</th>
+                            <th>Description</th>
+                            <th class="text-end">Amount (LKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in sectionEntries)
+                        {
+                            <tr>
+                                <td>@entry.EntryDate.ToString("HH:mm")</td>
+                                <td><code>@entry.Transaction.ServiceRequest.ReferenceNumber</code></td>
+                                <td>
+                                    @if (entry.PaymentMethod == "Cash")
+                                    {
+                                        <span class="badge bg-success">Cash</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-info">Online</span>
+                                    }
+                                </td>
+                                <td>@entry.GetDescription()</td>
+                                <td class="text-end fw-bold">@entry.Amount.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td colspan="4" class="text-end fw-semibold">Register Subtotal:</td>
+                            <td class="text-end fw-bold">LKR @((decimal)summary.Total).ToString("N2")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted p-3 mb-0">No transactions today for this register.</p>
+            }
+
+
+
+        </div>
+    </div>
+}
