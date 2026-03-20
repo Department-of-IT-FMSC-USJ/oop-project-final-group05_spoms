@@ -1,0 +1,80 @@
+@model List<SmartPostOffice.Models.DayBalance>
+@using SmartPostOffice.Controllers
+@{
+    ViewData["Title"] = "Cash Book History";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 style="color:var(--sl-navy);">
+        <i class="bi bi-clock-history me-2"></i>Cash Book History
+    </h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Today's Cash Book
+    </a>
+</div>
+
+@foreach (var dayGroup in Model.GroupBy(b => b.BalanceDate.Date).OrderByDescending(g => g.Key))
+{
+    bool anyDiscrepancy = dayGroup.Any(b => b.Status == "DISCREPANCY");
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between" style="background:var(--sl-navy); color:white;">
+            <strong>@dayGroup.Key.ToString("dd MMM yyyy")</strong>
+            <div>
+                @if (dayGroup.Count() == 5 && !anyDiscrepancy)
+                {
+                    <span class="badge bg-success">✅ All Balanced</span>
+                }
+                else if (anyDiscrepancy)
+                {
+
+                    <span class="badge bg-warning text-dark">⚠️ Discrepancy</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-secondary">Partial Close</span>
+                }
+                &nbsp;
+                <a asp-action="DailyReport" asp-route-date="@dayGroup.Key.ToString("yyyy-MM-dd")"
+                   class="btn btn-sm btn-light ms-2">Report</a>
+            </div>
+        </div>
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Register</th>
+                    <th>Entries</th>
+                    <th>System Cash</th>
+                    <th>Physical</th>
+                    <th>Discrepancy</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in dayGroup.OrderBy(b => b.ServiceType))
+                {
+                    <tr class="@(b.Status == "BALANCED" ? "" : "table-warning")">
+                        <td>@CashBookController.GetRegisterName(b.ServiceType)</td>
+                        <td>@b.TotalEntries</td>
+                        <td>LKR @b.SystemCashTotal.ToString("N2")</td>
+                        <td>LKR @b.PhysicalCashCounted.ToString("N2")</td>
+                        <td class="@(b.Discrepancy == 0 ? "text-success" : "text-danger")">
+                            LKR @Math.Abs(b.Discrepancy).ToString("N2")
+                        </td>
+                        <td>
+                            @if (b.Status == "BALANCED")
+                            {
+                                <span class="badge bg-success">Balanced</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-warning text-dark">Discrepancy</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
