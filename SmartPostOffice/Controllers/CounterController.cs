@@ -145,7 +145,10 @@ public class CounterController : Controller
         await _db.SaveChangesAsync();
 
         decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
-
+        if (model.ServiceType == ServiceType.COD && model.SellerProfitAmount.HasValue)
+            {
+                model.TotalCODAmount = charge + model.SellerProfitAmount.Value;
+            }
         var transaction = new Transaction
         {
             ServiceRequestId = model.Id,
