@@ -56,11 +56,22 @@
                             <i class="bi bi-house-fill me-1"></i>Home
                         </a>
                     </li>
+                    @if (User.Identity?.IsAuthenticated != true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="ServiceRequest" asp-action="Create">
+                                    <i class="bi bi-plus-circle-fill me-1"></i>Request Services
+                                </a>
+                            </li>
+                        }
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="ServiceRequest" asp-action="Create">
-                            <i class="bi bi-plus-circle-fill me-1"></i>Request Services
+                        <a class="nav-link" asp-controller="Counter" asp-action="Dashboard">
+                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
                         </a>
                     </li>
+                    }
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Tracking" asp-action="Track">
                             <i class="bi bi-geo-alt-fill me-1"></i>Track Services
@@ -79,11 +90,11 @@
                 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <li class="nav-item">
+                    @* <li class="nav-item">
                         <a class="nav-link" asp-controller="Counter" asp-action="Dashboard">
                         <i class="bi bi-speedometer2 me-1"></i>Dashboard
                         </a>
-                    </li>
+                    </li> *@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Counter" asp-action="ProcessRequest">
                         <i class="bi bi-clipboard-check me-1"></i>Process Service
