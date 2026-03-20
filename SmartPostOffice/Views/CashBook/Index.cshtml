@@ -29,19 +29,19 @@
         <div class="col-md-4">
             <div class="text-muted small">Total Cash (All Registers)</div>
             <div style="font-size:1.6rem; font-weight:700; color:#1E7A45;">
-                LKR @summaries.Sum(s => (decimal)s.CashTotal).ToString("N2")
+                LKR @(summaries.Sum(s => (decimal)s.CashTotal).ToString("N2"))
             </div>
         </div>
         <div class="col-md-4">
             <div class="text-muted small">Total Online (All Registers)</div>
             <div style="font-size:1.6rem; font-weight:700; color:var(--sl-navy);">
-                LKR @summaries.Sum(s => (decimal)s.OnlineTotal).ToString("N2")
+                LKR @(summaries.Sum(s => (decimal)s.OnlineTotal).ToString("N2"))
             </div>
         </div>
         <div class="col-md-4">
             <div class="text-muted small">Grand Total</div>
             <div style="font-size:1.6rem; font-weight:700; color:var(--sl-navy);">
-                LKR @ViewBag.GrandTotal.ToString("N2")
+                LKR @(ViewBag.GrandTotal.ToString("N2"))
             </div>
         </div>
     </div>
@@ -60,11 +60,11 @@
                 <div>
                     <strong>@summary.RegisterName</strong>
                     &nbsp;&nbsp;
-                    <span class="badge bg-success">Cash: LKR @((decimal)summary.CashTotal).ToString("N2")</span>
-                    <span class="badge bg-info ms-1">Online: LKR @((decimal)summary.OnlineTotal).ToString("N2")</span>
+                    <span class="badge bg-success">Cash: LKR @(((decimal)summary.CashTotal).ToString("N2"))</span>
+                    <span class="badge bg-info ms-1">Online: LKR @(((decimal)summary.OnlineTotal).ToString("N2"))</span>
                 </div>
                 <div>
-                    <strong>Register Total: LKR @((decimal)summary.Total).ToString("N2")</strong>
+                    <strong>Register Total: LKR @(((decimal)summary.Total).ToString("N2"))</strong>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@
                     <tfoot class="table-secondary">
                         <tr>
                             <td colspan="4" class="text-end fw-semibold">Register Subtotal:</td>
-                            <td class="text-end fw-bold">LKR @((decimal)summary.Total).ToString("N2")</td>
+                            <td class="text-end fw-bold">LKR @(((decimal)summary.Total).ToString("N2"))</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -124,8 +124,8 @@
                     string cls = b.Status == "BALANCED" ? "alert-success" : "alert-warning";
                     <div class="alert @cls mb-0 py-2">
                         <strong>Closed.</strong>
-                        System Cash: LKR @b.SystemCashTotal.ToString("N2") |
-                        Physical: LKR @b.PhysicalCashCounted.ToString("N2") |
+                        System Cash: LKR @(b.SystemCashTotal.ToString("N2")) |
+                        Physical: LKR @(b.PhysicalCashCounted.ToString("N2")) |
                         @if (b.Status == "BALANCED")
                         {
                             <span>✅ Balanced</span>
@@ -133,7 +133,7 @@
                         else
                         {
 
-                            <span>⚠️ Discrepancy: LKR @Math.Abs(b.Discrepancy).ToString("N2")</span>
+                            <span>⚠️ Discrepancy: LKR @(Math.Abs(b.Discrepancy).ToString("N2"))</span>
                         }
                     </div>
                 }
@@ -161,7 +161,7 @@
                             <div class="col-md-4">
                                 <small class="text-muted">
                                     System Cash for this register:
-                                    <strong>LKR @((decimal)summary.CashTotal).ToString("N2")</strong>
+                                    <strong>LKR @(((decimal)summary.CashTotal).ToString("N2"))</strong>
                                 </small>
                             </div>
                         </div>
