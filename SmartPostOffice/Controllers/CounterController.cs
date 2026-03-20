@@ -11,9 +11,13 @@ public class CounterController : Controller
 {
     private readonly PostOfficeDbContext _db;
     private readonly IPostalChargeService _chargeService;
+    private readonly ICashBookRepository _cashBook;   
 
-    public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService)
-    { _db = db; _chargeService = chargeService; }
+    public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService,ICashBookRepository cashBook)
+    {
+         _db = db; 
+         _chargeService = chargeService; 
+         _cashBook = cashBook; }
 
 
     public async Task<IActionResult> Dashboard()
@@ -102,6 +106,9 @@ public class CounterController : Controller
         });
 
         await _db.SaveChangesAsync();
+        var registerEntry = CreateRegisterEntry(request.ServiceType, charge, paymentMethod, transaction.Id);
+        await _cashBook.AddEntryAsync(registerEntry);
+
         return RedirectToAction("Receipt", new { transactionId = transaction.Id });
     }
 
@@ -154,7 +161,31 @@ public class CounterController : Controller
             UpdatedByOfficerId = officerId
         });
         await _db.SaveChangesAsync();
+        var registerEntry = CreateRegisterEntry(model.ServiceType, charge, paymentMethod, transaction.Id);
+        await _cashBook.AddEntryAsync(registerEntry);
+
         return RedirectToAction("Receipt", new { transactionId = transaction.Id });
     }
+    private CashBookEntry CreateRegisterEntry(
+    ServiceType serviceType, decimal amount, string paymentMethod, int transactionId)
+    {
+        CashBookEntry entry = serviceType switch
+        {
+            ServiceType.OrdinaryLetter => new OrdinaryLetterEntry(),
+            ServiceType.RegisteredMail => new RegisteredMailEntry(),
+            ServiceType.SpeedPost      => new SpeedPostEntry(),
+            ServiceType.OrdinaryParcel => new OrdinaryParcelEntry(),
+            ServiceType.COD            => new CODEntry(),
+            _ => throw new ArgumentOutOfRangeException(nameof(serviceType))
+      }; 
+ 
+    
+        entry.Amount          = amount;
+        entry.PaymentMethod   = paymentMethod;
+        entry.EntryDate       = DateTime.Now;
+        entry.EntryType       = "CREDIT";
+        return entry;
+    }
+
 
 }
