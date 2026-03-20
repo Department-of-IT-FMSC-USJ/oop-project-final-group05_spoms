@@ -27,11 +27,17 @@ namespace SmartPostOffice.Data
                 .HasValue<SpeedPostEntry>("SpeedPostEntry")
                 .HasValue<OrdinaryParcelEntry>("OrdinaryParcelEntry")
                 .HasValue<CODEntry>("CODEntry");
+
+            modelBuilder.Entity<DayBalance>()
+                .Property(d => d.ServiceType)
+                .HasConversion<int>();
+
         }
         public DbSet<PostOfficeOfficer> Officers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<TrackingHistory> TrackingHistory { get; set; }
         public DbSet<CashBookEntry> CashBookEntries { get; set; }
+        public DbSet<DayBalance> DayBalances { get; set; }
 
     }
 }
