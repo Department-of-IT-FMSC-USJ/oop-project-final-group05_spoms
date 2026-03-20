@@ -11,13 +11,14 @@ public class CounterController : Controller
 {
     private readonly PostOfficeDbContext _db;
     private readonly IPostalChargeService _chargeService;
-    private readonly ICashBookRepository _cashBook;   
+    private readonly ICashBookRepository _cashBook;
 
-    public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService,ICashBookRepository cashBook)
+    public CounterController(PostOfficeDbContext db, IPostalChargeService chargeService, ICashBookRepository cashBook)
     {
-         _db = db; 
-         _chargeService = chargeService; 
-         _cashBook = cashBook; }
+        _db = db;
+        _chargeService = chargeService;
+        _cashBook = cashBook;
+    }
 
 
     public async Task<IActionResult> Dashboard()
@@ -173,17 +174,17 @@ public class CounterController : Controller
         {
             ServiceType.OrdinaryLetter => new OrdinaryLetterEntry(),
             ServiceType.RegisteredMail => new RegisteredMailEntry(),
-            ServiceType.SpeedPost      => new SpeedPostEntry(),
+            ServiceType.SpeedPost => new SpeedPostEntry(),
             ServiceType.OrdinaryParcel => new OrdinaryParcelEntry(),
-            ServiceType.COD            => new CODEntry(),
+            ServiceType.COD => new CODEntry(),
             _ => throw new ArgumentOutOfRangeException(nameof(serviceType))
-      }; 
- 
-    
-        entry.Amount          = amount;
-        entry.PaymentMethod   = paymentMethod;
-        entry.EntryDate       = DateTime.Now;
-        entry.EntryType       = "CREDIT";
+        };
+
+        entry.TransactionId = transactionId;
+        entry.Amount = amount;
+        entry.PaymentMethod = paymentMethod;
+        entry.EntryDate = DateTime.Now;
+        entry.EntryType = "CREDIT";
         return entry;
     }
 
