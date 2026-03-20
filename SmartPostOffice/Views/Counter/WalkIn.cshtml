@@ -140,7 +140,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-telephone"></i>
                             </span>
-                            <input asp-for="SenderPhone"                 class="form-control"   placeholder="07XXXXXXXX" />
+                            <input asp-for="SenderPhone" class="form-control"  placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="SenderPhone" class="text-danger small"></span>
                     </div>
@@ -152,7 +152,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-house"></i>
                             </span>
-                            <input asp-for="SenderAddress"              class="form-control"                         placeholder="Street, City" />
+                            <input asp-for="SenderAddress" class="form-control" placeholder="Street, City" />
                         </div>
                         <span asp-validation-for="SenderAddress" class="text-danger small"></span>
                     </div>
@@ -187,7 +187,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-telephone"></i>
                             </span>
-                            <input asp-for="ReceiverPhone"                                 class="form-control"                   placeholder="07XXXXXXXX" />
+                            <input asp-for="ReceiverPhone"   class="form-control" placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
                     </div>
@@ -235,7 +235,7 @@
                         Estimated Weight (g) <span class="required-star">*</span>
                     </label>
                     <div class="input-group">
-                        <input asp-for="EstimatedWeightGrams"            class="form-control"                    placeholder="e.g. 250" />
+                        <input asp-for="EstimatedWeightGrams" class="form-control" />
                         <span class="input-group-text">g</span>
                     </div>
                     <span asp-validation-for="EstimatedWeightGrams" class="text-danger small"></span>
@@ -247,8 +247,7 @@
                         Actual Weight (g) <span class="required-star">*</span>
                     </label>
                     <div class="input-group">
-                        <input type="number"  id="walkInWeight"         name="actualWeightGrams"                class="form-control"
-                               placeholder="Weighed on scale"                               min="1" max="40000"               required />
+                        <input type="number"  id="walkInWeight" name="actualWeightGrams" class="form-control" placeholder="Weighed on scale"   min="1" max="40000" required />
                         <span class="input-group-text">g</span>
                     </div>
                     <div class="form-text">Enter the weight from the counter scale.</div>

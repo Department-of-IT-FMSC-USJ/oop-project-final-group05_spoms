@@ -72,7 +72,7 @@
                         </label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
-                            <input asp-for="SenderPhone" class="form-control" placeholder="07X-XXXXXXX" />
+                            <input asp-for="SenderPhone" class="form-control" placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="SenderPhone" class="text-danger small"></span>
                     </div>
@@ -108,7 +108,7 @@
                         </label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
-                            <input asp-for="ReceiverPhone" class="form-control" placeholder="07X-XXXXXXX" />
+                            <input asp-for="ReceiverPhone" class="form-control" placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
                     </div>
@@ -141,7 +141,7 @@
                     <label asp-for="EstimatedWeightGrams" class="form-label">
                         Estimated Weight(g) <span style="color:var(--sl-red)">*</span>
                     </label>
-                    <input asp-for="EstimatedWeightGrams" class="form-control" placeholder="e.g. 250" step="1" min="1"
+                    <input asp-for="EstimatedWeightGrams" class="form-control" step="1" min="1"
                            max="50000" />
                     <span asp-validation-for="EstimatedWeightGrams" class="text-danger small"></span>
                 </div>
@@ -207,7 +207,7 @@
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">Rs.</span>
-                                    <input asp-for="SellerProfitAmount" class="form-control" placeholder="300.00"
+                                    <input asp-for="SellerProfitAmount" class="form-control" placeholder="1000.00"
                                            step="0.01" min="0" id="profitInput" />
                                 </div>
                                 <span asp-validation-for="SellerProfitAmount" class="text-danger small"></span>
