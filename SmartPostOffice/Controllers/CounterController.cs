@@ -127,7 +127,9 @@ public class CounterController : Controller
     // WALK-IN process
     [HttpPost]
     public async Task<IActionResult> WalkIn(ServiceRequest model, decimal actualWeightGrams, string paymentMethod)
-    {
+    {   
+        ModelState.Remove("EstimatedWeightGrams");
+        model.EstimatedWeightGrams = actualWeightGrams;
         if (!ModelState.IsValid) return View(model);
 
         int officerId = int.Parse(User.FindFirst("OfficerId")!.Value);
