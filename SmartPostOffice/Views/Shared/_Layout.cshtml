@@ -94,6 +94,17 @@
                         <i class="bi bi-person-walking me-1"></i>Walk-in
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="CashBook" asp-action="Index">
+                            <i class="bi bi-journal-text me-1"></i>Cash Book
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="CashBook" asp-action="DailyReport">
+                            <i class="bi bi-file-earmark-bar-graph me-1"></i>Daily Report
+                       </a>
+                    </li>
+
                     }
                     </ul>
                 @if (User.Identity?.IsAuthenticated == true)
