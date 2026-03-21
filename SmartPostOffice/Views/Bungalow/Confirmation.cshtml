@@ -1,0 +1,30 @@
+@model SmartPostOffice.Models.BungalowBooking
+@{ ViewData["Title"] = "Booking Confirmed"; }
+<div class="row justify-content-center mt-4"><div class="col-md-6">
+  <div class="card shadow text-center" style="border-top:5px solid var(--sl-gold);">
+    <div class="card-body p-5">
+      <div style="font-size:4rem;">✅</div>
+      <h2 class="fw-bold mt-3" style="color:var(--sl-navy);">Booking Confirmed!</h2>
+      <p class="text-muted">Your payment was processed successfully. Show this reference at the bungalow.</p>
+      <hr/>
+      <div class="text-start">
+        <div class="row mb-2"><div class="col-5 fw-semibold">Booking Ref</div><div class="col-7 fw-bold" style="color:var(--sl-navy);">@Model.BookingReference</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Location</div><div class="col-7">@Model.Location</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Room</div><div class="col-7">@Model.RoomOption</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Check-In</div><div class="col-7">@Model.CheckIn.ToString("dd MMM yyyy")</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Check-Out</div><div class="col-7">@Model.CheckOut.ToString("dd MMM yyyy")</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Nights</div><div class="col-7">@Model.Nights</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Guests</div><div class="col-7">@Model.GuestCount</div></div>
+        <hr/>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Room Rate</div><div class="col-7">LKR @Model.RoomRatePerNight.ToString("N2") × @Model.Nights night(s)</div></div>
+        <div class="row mb-2"><div class="col-5 fw-semibold">Service Charge</div><div class="col-7">LKR @Model.ServiceCharge.ToString("N2")</div></div>
+        <div class="row mb-2 fw-bold fs-5"><div class="col-5">Total Paid</div><div class="col-7" style="color:var(--sl-red);">LKR @Model.CalculateTotal().ToString("N2")</div></div>
+        <hr/>
+        <div class="row mb-1"><div class="col-5 fw-semibold">Payment Ref</div><div class="col-7 small text-success">@Model.PaymentReference</div></div>
+        <div class="row"><div class="col-5 fw-semibold">Paid At</div><div class="col-7 small">@Model.PaidAt?.ToString("dd MMM yyyy HH:mm")</div></div>
+      </div>
+      <div class="mt-4"><a asp-action="Index" class="btn" style="background:var(--sl-navy); color:white;">Book Another</a></div>
+    </div>
+  </div>
+</div>
+</div>
