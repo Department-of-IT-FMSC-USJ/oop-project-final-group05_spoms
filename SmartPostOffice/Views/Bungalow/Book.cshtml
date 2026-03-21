@@ -33,7 +33,9 @@
        <div class="mb-3"><label class="form-label fw-semibold">Select Room</label>
          <select name="roomLabel" class="form-select" id="roomSel">
            @foreach (var r in loc.Rooms)
-           { <option value="@r.RoomLabel" data-rate="@r.OutsiderRate">@r.RoomLabel — LKR @r.OutsiderRate.ToString("N0")/night (max @r.MaxGuests guests)</option> }
+           {
+             <option value="@r.RoomLabel" data-rate="@r.OutsiderRate">@r.RoomLabel — LKR @r.OutsiderRate.ToString("N0")/night (max @r.MaxGuests guests)</option>
+           }
          </select></div>
      }
      else
@@ -43,10 +45,14 @@
      }
      <div class="row">
        <div class="col-md-6 mb-3"><label asp-for="CheckIn" class="form-label fw-semibold"></label>
-         <input asp-for="CheckIn" class="form-control" type="date" id="ci" />
+         <input asp-for="CheckIn" class="form-control" type="date" id="ci" 
+          min="@DateTime.Today.ToString("yyyy-MM-dd")" 
+          value="@DateTime.Today.ToString("yyyy-MM-dd")" />
          <span asp-validation-for="CheckIn" class="text-danger small"></span></div>
        <div class="col-md-6 mb-3"><label asp-for="CheckOut" class="form-label fw-semibold"></label>
-         <input asp-for="CheckOut" class="form-control" type="date" id="co" />
+         <input asp-for="CheckOut" class="form-control" type="date" id="co" 
+          min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
+          value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
          <span asp-validation-for="CheckOut" class="text-danger small"></span></div>
      </div>
      <div class="mb-3"><label asp-for="GuestCount" class="form-label fw-semibold"></label>
@@ -84,8 +90,9 @@
       const rate = sel ? parseFloat(sel.selectedOptions[0].dataset.rate) : @loc.Rooms.First().OutsiderRate;
       const sc = document.getElementById('staffCb');
       const staffRates = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(loc.Rooms.ToDictionary(r=>r.RoomLabel, r=>r.StaffRate)));
-      const effectiveRate = (sc && sc.checked && staffRates[sel?.value] > 0)
-                           ? staffRates[sel?.value] : rate;
+      const roomKey = sel ? sel.value : '@loc.Rooms.First().RoomLabel';
+      const effectiveRate = (sc && sc.checked && staffRates[roomKey] > 0)
+                     ? staffRates[roomKey] : rate;
       const total = (effectiveRate * nights) + 300;
       document.getElementById('totalEst').textContent =
         'LKR ' + total.toLocaleString('en-US',{minimumFractionDigits:2}) +
