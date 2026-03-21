@@ -1,0 +1,51 @@
+@model SmartPostOffice.Models.StampOrder
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow text-center" style="border-top:5px solid var(--sl-gold);">
+            <div class="card-body p-5">
+                <div style="font-size:4rem;">📬</div>
+                <h2 class="fw-bold mt-3" style="color:var(--sl-navy);">Order Confirmed!</h2>
+                <p class="text-muted">Your stamp order has been received. Delivery to your address within 7 working
+                    days.</p>
+                    <hr />
+                    <div class="text-start">
+                        <div class="row mb-2">
+                            <div class="col-6 fw-semibold">Order Ref</div>
+                            <div class="col-6 fw-bold" style="color:var(--sl-navy);">@Model.OrderReference</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6 fw-semibold">Stamp Style</div>
+                            <div class="col-6">@Model.StampStyleName</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6 fw-semibold">Quantity</div>
+                            <div class="col-6">@Model.Quantity stamps</div>
+                        </div>
+                        <hr />
+                        <div class="row mb-2">
+                            <div class="col-6 fw-semibold">Stamp Cost</div>
+                            <div class="col-6">LKR @((Model.PricePerStamp*Model.Quantity).ToString("N2"))</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6 fw-semibold">Service Charge</div>
+                            <div class="col-6">LKR @Model.ServiceCharge.ToString("N2")</div>
+                        </div>
+                        <div class="row mb-2 fw-bold fs-5">
+                            <div class="col-6">Total Paid</div>
+                            <div class="col-6" style="color:var(--sl-red);">LKR @Model.CalculateTotal().ToString("N2")</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-6 fw-semibold">Payment Ref</div>
+                            <div class="col-6 small text-success">@Model.PaymentReference</div>
+                        </div>
+                    </div>
+                    <div class="mt-4"><a asp-action="Index" class="btn"
+                                             style="background:var(--sl-navy); color:white;">Order More</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
