@@ -23,6 +23,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IPostalChargeService, PostalChargeService>();
 builder.Services.AddScoped<ICashBookRepository, CashBookRepository>();
+builder.Services.AddScoped<IPaymentService, SimulatedPaymentService>();
 
 var app = builder.Build();
 
