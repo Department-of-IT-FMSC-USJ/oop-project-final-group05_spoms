@@ -1,0 +1,115 @@
+@model List<SmartPostOffice.Models.StampStyle>
+@{
+    ViewData["Title"] = "Special Stamp Order";
+}
+
+<div class="p-4 mb-4 rounded text-white" style="background:var(--sl-navy);">
+    <h2><i class="bi bi-bookmark-star-fill me-2"></i>Special Stamp Order</h2>
+    <p class="mb-1">Select one stamp style. Order 1–25 stamps. Payment is online.</p>
+    <small style="color:var(--sl-gold);">Fixed post office service charge: LKR 500.00 per order</small>
+</div>
+
+<div class="row">
+   
+    <div class="col-md-7">
+        <h5 class="fw-bold mb-3" style="color:var(--sl-navy);">Step 1 — Select a Stamp Style</h5>
+        <div class="row g-3">
+            @foreach (var s in Model)
+            {
+                <div class="col-6 col-md-4">
+                    <div class="card stamp-card text-center h-100" style="cursor:pointer; border:2px solid transparent;"
+                         data-id="@s.Id" data-name="@s.Name" data-price="@s.PricePerStamp"            data-emoji="@s.ImagePlaceholder"
+                         onclick="selectStamp(this)">
+                        <div class="card-body p-2">
+                            <div style="font-size:2.5rem;">@s.ImagePlaceholder</div>
+                            <div class="fw-semibold small mt-1">@s.Name</div>
+                            <span class="badge" style="background:var(--sl-navy);">LKR @s.PricePerStamp/stamp</span>
+                            <div class="text-muted" style="font-size:0.7rem;">@s.Theme</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+ 
+    <div class="col-md-5">
+        <div class="card shadow" style="position:sticky; top:1rem; border-top:4px solid var(--sl-gold);">
+            <div class="card-header fw-bold" style="background:var(--sl-navy); color:white;">
+                <i class="bi bi-cart-fill me-2"></i>Your Order
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Order">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="stampStyleId" id="selId" value="0" />
+
+                    <div class="alert alert-warning p-2 small mb-3" id="noSelMsg">
+                        ← Click a stamp style on the left to select it
+                    </div>
+                    <div id="selDisplay" style="display:none;" class="text-center mb-3 p-2 rounded"
+                         style="background:#f8f9fa;">
+                        <span id="selEmoji" style="font-size:2.5rem;"></span>
+                        <div class="fw-bold" id="selName"></div>
+                        <div class="text-muted small" id="selPrice"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Number of Stamps (1–25)</label>
+                        <input name="Quantity" id="qty" class="form-control" type="number"               min="1" max="25" value="1"
+                               oninput="updateTotal()" required />
+                    </div>
+                    <div class="p-2 rounded mb-3" style="background:var(--sl-navy); color:white;">
+                        Total: <strong id="totalAmt">—</strong>
+                    </div>
+
+                    <div class="mb-2"><label class="form-label fw-semibold">Full Name</label>
+                        <input name="CustomerName" class="form-control" required />
+                    </div>
+                    <div class="mb-2"><label class="form-label fw-semibold">Phone</label>
+                        <input name="Phone" class="form-control" maxlength="10" required />
+                    </div>
+                    <div class="mb-2"><label class="form-label fw-semibold">Email</label>
+                        <input name="Email" type="email" class="form-control" required />
+                    </div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Delivery Address</label>
+                        <textarea name="DeliveryAddress" class="form-control" rows="2" required></textarea>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn fw-bold"
+                                style="background:var(--sl-gold); color:var(--sl-navy);">
+                            <i class="bi bi-arrow-right-circle-fill me-2"></i>Proceed to Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selPrice = 0;
+        function selectStamp(el) {
+          document.querySelectorAll('.stamp-card').forEach(c => { c.style.border = '2px solid transparent'; c.style.boxShadow = ''; });
+          el.style.border = '2px solid var(--sl-gold)';
+          el.style.boxShadow = '0 0 10px rgba(201,168,76,0.5)';
+          document.getElementById('selId').value = el.dataset.id;
+          document.getElementById('selEmoji').textContent = el.dataset.emoji;
+          document.getElementById('selName').textContent = el.dataset.name;
+          document.getElementById('selPrice').textContent = 'LKR ' + el.dataset.price + ' per stamp';
+          document.getElementById('noSelMsg').style.display = 'none';
+          document.getElementById('selDisplay').style.display = 'block';
+          selPrice = parseFloat(el.dataset.price);
+          updateTotal();
+        }
+        function updateTotal() {
+          const qty = parseInt(document.getElementById('qty').value) || 0;
+          if (selPrice === 0) return;
+          const total = (selPrice * qty) + 500;
+          document.getElementById('totalAmt').textContent =
+            'LKR ' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }) +
+            ' (' + qty + ' × LKR ' + selPrice + ' + LKR 500 service charge)';
+        }
+    </script>
+}
