@@ -1,0 +1,44 @@
+@model SmartPostOffice.Models.TelimailMessage
+@{
+  ViewData["Title"] = "Telemail Submitted";
+}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6">
+    <div class="card shadow text-center" style="border-top:5px solid var(--sl-gold);">
+      <div class="card-body p-5">
+        <div style="font-size:4rem;">📨</div>
+        <h2 class="fw-bold mt-3" style="color:var(--sl-navy);">Telemail Submitted!</h2>
+        <p class="text-muted">Your message will be delivered to the recipient within 2 hours.</p>
+        <hr />
+        <div class="text-start">
+          <div class="row mb-2">
+            <div class="col-5 fw-semibold">Reference</div>
+            <div class="col-7 fw-bold" style="color:var(--sl-navy);">@Model.TelimailReference</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5 fw-semibold">Recipient</div>
+            <div class="col-7">@Model.RecipientName</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-5 fw-semibold">Destination</div>
+            <div class="col-7">@Model.DestinationPostOffice</div>
+          </div>
+          <hr />
+          <div class="row mb-2 fw-bold">
+            <div class="col-5">Charge Paid</div>
+            <div class="col-7" style="color:var(--sl-red);">LKR @Model.TelimailCharge.ToString("N2")</div>
+          </div>
+          <div class="row">
+            <div class="col-5 fw-semibold">Payment Ref</div>
+            <div class="col-7 small text-success">@Model.PaymentReference</div>
+          </div>
+        </div>
+        <div class="mt-4 d-flex justify-content-center gap-3">
+          <a asp-action="Send" class="btn" style="background:var(--sl-navy); color:white;">Send Another</a>
+          <a asp-controller="Home" asp-action="Index" class="btn"
+             style="background:var(--sl-gold); color:var(--sl-navy);">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
