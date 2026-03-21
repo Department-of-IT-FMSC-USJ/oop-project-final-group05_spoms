@@ -5,7 +5,7 @@ namespace SmartPostOffice.Models
     public abstract class CashBookEntry
     {
         public int Id { get; set; }
-        public int TransactionId { get; set; }
+        public int? TransactionId { get; set; }
         public Transaction Transaction { get; set; } = null!;
 
         public decimal Amount { get; set; }
@@ -63,4 +63,28 @@ namespace SmartPostOffice.Models
         public override string GetDescription()
             => $"Cash on Delivery — {PaymentMethod} — LKR {Amount:N2}";
     }
+
+    // 6.Bungalow Register 
+    public class BungalowEntry : CashBookEntry
+    {
+        public override string GetRegisterName() => "Bungalow Register";
+        public override string GetDescription()
+            => $"Bungalow Booking — Online — LKR {Amount:N2}";
+    }
+
+    // 7. Stamp Order Register 
+    public class StampOrderEntry : CashBookEntry
+    {
+        public override string GetRegisterName() => "Stamp Order Register";
+        public override string GetDescription()
+            => $"Stamp Order — Online — LKR {Amount:N2}";
+    }
+    // 8. Telemail Register 
+    public class TelimailEntry : CashBookEntry
+    {
+        public override string GetRegisterName() => "Telemail Register";
+        public override string GetDescription()
+            => $"Telemail — Online — LKR {Amount:N2}";
+    }
+
 }
