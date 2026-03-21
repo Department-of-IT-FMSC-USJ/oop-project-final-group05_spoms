@@ -26,7 +26,11 @@ namespace SmartPostOffice.Data
                 .HasValue<RegisteredMailEntry>("RegisteredMailEntry")
                 .HasValue<SpeedPostEntry>("SpeedPostEntry")
                 .HasValue<OrdinaryParcelEntry>("OrdinaryParcelEntry")
-                .HasValue<CODEntry>("CODEntry");
+                .HasValue<CODEntry>("CODEntry")
+                .HasValue<BungalowEntry>("BungalowEntry")
+                .HasValue<StampOrderEntry>("StampOrderEntry")
+                .HasValue<TelimailEntry>("TelimailEntry");
+            
 
             modelBuilder.Entity<DayBalance>()
                 .Property(d => d.ServiceType)
@@ -38,6 +42,11 @@ namespace SmartPostOffice.Data
         public DbSet<TrackingHistory> TrackingHistory { get; set; }
         public DbSet<CashBookEntry> CashBookEntries { get; set; }
         public DbSet<DayBalance> DayBalances { get; set; }
+
+        public DbSet<BungalowBooking> BungalowBookings { get; set; }
+        public DbSet<StampOrder> StampOrders { get; set; }
+        public DbSet<TelimailMessage> TelimailMessages { get; set; }
+
 
     }
 }
