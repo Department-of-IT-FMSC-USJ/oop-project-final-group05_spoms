@@ -1,0 +1,43 @@
+@model List<SmartPostOffice.Models.TelimailMessage>
+@{ ViewData["Title"] = "Telemail Inbox"; }
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 style="color:var(--sl-navy);"><i class="bi bi-inbox-fill me-2"></i>Telemail Inbox</h2>
+    <p class="text-muted mb-0">Paid Telemail messages awaiting forwarding to destination post offices.</p>
+  </div>
+  <span class="badge fs-6" style="background:var(--sl-navy);">@Model.Count pending</span>
+</div>
+@if (!Model.Any())
+{
+  <div class="alert alert-info"><i class="bi bi-inbox me-2"></i>No Telemail messages received yet.</div>
+}
+else
+{
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead style="background:var(--sl-navy); color:white;">
+        <tr><th>Reference</th><th>From</th><th>To</th><th>Destination Office</th><th>Status</th><th>Submitted</th></tr>
+      </thead>
+      <tbody>
+        @foreach (var m in Model)
+        {
+          <tr>
+            <td class="fw-bold" style="color:var(--sl-navy);">@m.TelimailReference</td>
+            <td>@m.SenderName</td>
+            <td>@m.RecipientName</td>
+            <td>@m.DestinationPostOffice</td>
+            <td>
+              @if (m.MessageStatus == "Submitted")
+                { <span class="badge bg-warning text-dark">Submitted</span> }
+              else if (m.MessageStatus == "Forwarded")
+                { <span class="badge bg-info">Forwarded</span> }
+              else
+                { <span class="badge bg-success">Delivered</span> }
+            </td>
+            <td class="small text-muted">@m.CreatedAt.ToString("dd MMM HH:mm")</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
