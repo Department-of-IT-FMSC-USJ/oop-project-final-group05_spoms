@@ -1,0 +1,37 @@
+@{ ViewData["Title"] = "Telemail Service"; }
+<div class="p-4 mb-4 rounded text-white" style="background:var(--sl-navy);">
+  <h2><i class="bi bi-chat-square-text-fill me-2"></i>Telemail Service</h2>
+  <p class="mb-1">Send an urgent message that carries the same legal recognition as a Telegram.</p>
+  <small style="color:var(--sl-gold);">Administrative Circular 24/2013 · Delivered within 2 hours · LKR 250 flat charge</small>
+</div>
+<div class="row g-4">
+  <div class="col-md-8">
+    <div class="card p-4" style="border-left:5px solid var(--sl-navy);">
+      <h5 class="fw-bold" style="color:var(--sl-navy);">About Telemail</h5>
+      <p>The Telemail service was initiated on <strong>02.04.2001</strong> for sending urgent and written messages.
+      It operated concurrently with the Telegram service. The Telegram service was discontinued from
+      <strong>01.10.2013</strong>, and Public Administrative Circular 24/2013 confirms that a Telemail message
+      holds the same recognition as a Telegram message.</p>
+      <p>The customer delivers an urgent message online, which is then promptly forwarded to the destination
+      post office via direct telephone and delivered to the recipient <strong>within two hours</strong>.</p>
+      <h6 class="fw-bold mt-3">Acceptance Rules</h6>
+      <ul>
+        <li>Accepted through any Post Office or Sub Post Office with distribution facilities</li>
+        <li>Form TM-01 must be completed — Part A by customer, Part B by office</li>
+        <li>Recipient name and address must be clearly mentioned</li>
+        <li>Offensive, insulting, or vulgar messages will not be accepted</li>
+        <li>Message must be duly signed by the sender</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 text-center" style="border-top:5px solid var(--sl-gold);">
+      <div style="font-size:3rem;">📨</div>
+      <h5 class="fw-bold mt-2">LKR 250.00</h5>
+      <p class="text-muted small">Flat charge per message. Payment is online.</p>
+      <a asp-action="Send" class="btn w-100 fw-bold" style="background:var(--sl-gold); color:var(--sl-navy);">
+        <i class="bi bi-send-fill me-2"></i>Send Telemail Now
+      </a>
+    </div>
+  </div>
+</div>
