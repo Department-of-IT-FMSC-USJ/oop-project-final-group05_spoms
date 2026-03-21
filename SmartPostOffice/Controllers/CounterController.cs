@@ -34,10 +34,18 @@ public class CounterController : Controller
              && t.PaymentMethod == "Cash")
     .SumAsync(t => (decimal?)t.FinalCharge) ?? 0m;
 
-        ViewBag.TodayOnlineTotal = await _db.Transactions
+        var counterOnline = await _db.Transactions
             .Where(t => t.TransactionDate.Date == DateTime.Today
-                     && t.PaymentMethod == "Online")
-                             .SumAsync(t => (decimal?)t.FinalCharge) ?? 0m;
+                    && t.PaymentMethod == "Online")
+            .SumAsync(t => (decimal?)t.FinalCharge) ?? 0m;
+
+        var directOnline = await _db.CashBookEntries
+            .Where(e => e.EntryDate.Date == DateTime.Today
+                    && e.TransactionId == null
+                    && e.PaymentMethod == "Online")
+            .SumAsync(e => (decimal?)e.Amount) ?? 0m;
+
+        ViewBag.TodayOnlineTotal = counterOnline + directOnline;
 
         return View();
     }
@@ -127,7 +135,7 @@ public class CounterController : Controller
     // WALK-IN process
     [HttpPost]
     public async Task<IActionResult> WalkIn(ServiceRequest model, decimal actualWeightGrams, string paymentMethod)
-    {   
+    {
         ModelState.Remove("EstimatedWeightGrams");
         model.EstimatedWeightGrams = actualWeightGrams;
         if (!ModelState.IsValid) return View(model);
@@ -146,9 +154,9 @@ public class CounterController : Controller
 
         decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
         if (model.ServiceType == ServiceType.COD && model.SellerProfitAmount.HasValue)
-            {
-                model.TotalCODAmount = charge + model.SellerProfitAmount.Value;
-            }
+        {
+            model.TotalCODAmount = charge + model.SellerProfitAmount.Value;
+        }
         var transaction = new Transaction
         {
             ServiceRequestId = model.Id,

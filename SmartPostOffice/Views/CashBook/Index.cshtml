@@ -51,8 +51,9 @@
 @foreach (var summary in summaries)
 {
     var sectionEntries = Model.Where(
-        e => e.Transaction.ServiceRequest.ServiceType == (ServiceType)summary.ServiceType
-    ).ToList();
+            e => e.Transaction != null &&
+            e.Transaction.ServiceRequest != null &&
+            e.Transaction.ServiceRequest.ServiceType == (ServiceType)summary.ServiceType).ToList();
 
     <div class="card mb-4">
         <div class="card-header" style="background:var(--sl-navy); color:white;">
@@ -87,7 +88,7 @@
                         {
                             <tr>
                                 <td>@entry.EntryDate.ToString("HH:mm")</td>
-                                <td><code>@entry.Transaction.ServiceRequest.ReferenceNumber</code></td>
+                                <td><code>@(entry.Transaction?.ServiceRequest?.ReferenceNumber ?? "—")</code></td>
                                 <td>
                                     @if (entry.PaymentMethod == "Cash")
                                     {

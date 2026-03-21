@@ -36,6 +36,13 @@ namespace SmartPostOffice.Controllers
             model.ServiceCharge = room.ServiceCharge;
             model.RoomOption = room.RoomLabel;
             model.Location = loc.Name;
+            model.BookingReference = $"BNG-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
+            model.PaymentStatus = "Pending";
+
+            ModelState.Remove(nameof(BungalowBooking.BookingReference));
+            ModelState.Remove(nameof(BungalowBooking.PaymentStatus));
+            ModelState.Remove(nameof(BungalowBooking.RoomRatePerNight));
+            ModelState.Remove(nameof(BungalowBooking.Location));
 
             if (!ModelState.IsValid)
             {
@@ -43,8 +50,6 @@ namespace SmartPostOffice.Controllers
                 return View(model);
             }
 
-            model.BookingReference = $"BNG-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
-            model.PaymentStatus = "Pending";
             _db.BungalowBookings.Add(model);
             _db.SaveChanges();
 
