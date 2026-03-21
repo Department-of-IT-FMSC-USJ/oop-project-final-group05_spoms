@@ -184,63 +184,77 @@
     </main>
 
     <footer class="site-footer">
-        <div class="footer-top">
-            <div class="container">
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="footer-logo d-flex align-items-center gap-2 mb-2">
-                            <i class="bi bi-envelope-paper-fill"></i> Sri Lanka Post
+    <div class="footer-top py-5">
+        <div class="container">
+            <div class="row g-4">
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-logo d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-envelope-paper-fill fs-3 text-white"></i> 
+                        <span class="fs-4 fw-bold text-white">Sri Lanka Post</span>
+                    </div>
+                    <p class="footer-desc text-white-50">
+                        Serving Sri Lanka since 1798. Connecting communities island-wide across all 9 provinces through 4,738 post offices island-wide.
+                    </p>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Services</div>
+                    <div class="row g-0">
+                        <div class="col-6">
+                            <ul class="footer-links list-unstyled">
+                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryLetter" class="text-decoration-none">Ordinary Letter</a></li>
+                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryParcel" class="text-decoration-none">Ordinary Parcel</a></li>
+                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=SpeedPost" class="text-decoration-none">Speed Post</a></li>
+                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=RegisteredMail" class="text-decoration-none">Registered Mail</a></li>
+                            </ul>
                         </div>
-                        <p class="footer-desc">
-                            Serving Sri Lanka since 1798. Connecting communities
-                            across all 9 provinces through 4,738 post offices island-wide.
-                        </p>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="footer-heading">Services</div>
-                        <ul class="footer-links">
-                            <li><a href="#">Registered Post</a></li>
-                            <li><a href="#">Speed Post</a></li>
-                            <li><a href="#">Parcel Service</a></li>
-                            <li><a href="#">Money Orders</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="footer-heading">Support</div>
-                        <ul class="footer-links">
-                            <li><a href="#">Track Parcel</a></li>
-                            <li><a href="#">Find Post Office</a></li>
-                            <li><a href="#">Postage Rates</a></li>
-                            <li><a href="#">FAQ</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="footer-heading">Contact Us</div>
-                        <ul class="footer-contact">
-                            <li>
-                                <i class="bi bi-geo-alt-fill"></i>
-                                310, D.R. Wijewardena Mawatha, Colombo 01000
-                            </li>
-                            <li>
-                                <i class="bi bi-telephone-fill"></i>
-                                +94-112-328-301
-                            </li>
-                            <li>
-                                <i class="bi bi-envelope-fill"></i>
-                                info@slpost.lk
-                            </li>
-                        </ul>
+                        <div class="col-6">
+                            <ul class="footer-links list-unstyled">
+                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=COD" class="text-decoration-none">COD</a></li>
+                                <li class="mb-2"><a asp-controller="Bungalow" asp-action="Index" class="text-decoration-none">Bungalow Booking</a></li>
+                                <li class="mb-2"><a asp-controller="Stamp" asp-action="Index" class="text-decoration-none">Stamp Order</a></li>
+                                <li class="mb-2"><a asp-controller="Telemail" asp-action="Index" class="text-decoration-none">Tele mail</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Support</div>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2"><a asp-controller="Tracking" asp-action="Track" class="text-decoration-none">Track Parcel</a></li>
+
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Contact Us</div>
+                    <div class="footer-contact-info text-white-50">
+                        <div class="d-flex align-items-start gap-2 mb-3">
+                            <i class="bi bi-geo-alt-fill text-warning mt-1"></i>
+                            <span>310, D.R. Wijewardena Mawatha, Colombo 01000</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-telephone-fill text-warning"></i>
+                            <span>+94-112-328-301</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-fill text-warning"></i>
+                            <span>info@slpost.lk</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="footer-bottom">
-            <div class="container d-flex justify-content-between flex-wrap gap-2">
-                <span>&copy; @DateTime.Now.Year Sri Lanka Post — Department of Posts</span>
-                <span>Smart Post Office Management System</span>
-            </div>
+    </div>
+    <div class="footer-bottom py-3 border-top border-secondary">
+        <div class="container text-center text-muted small">
+            © 2026 Sri Lanka Post — Department of Posts. Smart Post Office Management System.
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
