@@ -1,0 +1,99 @@
+@model SmartPostOffice.Models.BungalowBooking
+@{ var loc = (SmartPostOffice.Models.BungalowLocation)ViewBag.Location; }
+
+<div class="row justify-content-center">
+ <div class="col-md-7">
+  <div class="card shadow">
+   <div class="card-header" style="background:var(--sl-navy); color:white;">
+     <h4 class="mb-0"><i class="bi bi-house-heart-fill me-2"></i>Book: @loc.Name @loc.Emoji</h4>
+   </div>
+   <div class="card-body">
+    <form method="post" asp-action="Book" asp-route-locationId="@loc.Id">
+     @Html.AntiForgeryToken()
+     <h6 class="fw-bold mb-3" style="color:var(--sl-navy);">Guest Details</h6>
+     <div class="row">
+       <div class="col-md-6 mb-3"><label asp-for="GuestName" class="form-label fw-semibold"></label>
+         <input asp-for="GuestName" class="form-control" />
+         <span asp-validation-for="GuestName" class="text-danger small"></span></div>
+       <div class="col-md-6 mb-3"><label asp-for="NIC" class="form-label fw-semibold"></label>
+         <input asp-for="NIC" class="form-control" />
+         <span asp-validation-for="NIC" class="text-danger small"></span></div>
+     </div>
+     <div class="row">
+       <div class="col-md-6 mb-3"><label asp-for="Phone" class="form-label fw-semibold"></label>
+         <input asp-for="Phone" class="form-control" />
+         <span asp-validation-for="Phone" class="text-danger small"></span></div>
+       <div class="col-md-6 mb-3"><label asp-for="Email" class="form-label fw-semibold"></label>
+         <input asp-for="Email" class="form-control" />
+         <span asp-validation-for="Email" class="text-danger small"></span></div>
+     </div>
+     <h6 class="fw-bold mb-3 mt-2" style="color:var(--sl-navy);">Booking Details</h6>
+     @if (loc.Rooms.Count > 1)
+     {
+       <div class="mb-3"><label class="form-label fw-semibold">Select Room</label>
+         <select name="roomLabel" class="form-select" id="roomSel">
+           @foreach (var r in loc.Rooms)
+           { <option value="@r.RoomLabel" data-rate="@r.OutsiderRate">@r.RoomLabel — LKR @r.OutsiderRate.ToString("N0")/night (max @r.MaxGuests guests)</option> }
+         </select></div>
+     }
+     else
+     {
+       <input type="hidden" name="roomLabel" value="@loc.Rooms.First().RoomLabel" />
+       <div class="alert alert-info p-2 small mb-3">@loc.Rooms.First().RoomLabel — LKR @loc.Rooms.First().OutsiderRate.ToString("N0")/night</div>
+     }
+     <div class="row">
+       <div class="col-md-6 mb-3"><label asp-for="CheckIn" class="form-label fw-semibold"></label>
+         <input asp-for="CheckIn" class="form-control" type="date" id="ci" />
+         <span asp-validation-for="CheckIn" class="text-danger small"></span></div>
+       <div class="col-md-6 mb-3"><label asp-for="CheckOut" class="form-label fw-semibold"></label>
+         <input asp-for="CheckOut" class="form-control" type="date" id="co" />
+         <span asp-validation-for="CheckOut" class="text-danger small"></span></div>
+     </div>
+     <div class="mb-3"><label asp-for="GuestCount" class="form-label fw-semibold"></label>
+       <input asp-for="GuestCount" class="form-control" type="number" min="1" max="13" />
+       <span asp-validation-for="GuestCount" class="text-danger small"></span></div>
+     @if (loc.Rooms.Any(r => r.StaffRate > 0))
+     {
+       <div class="form-check mb-3">
+         <input asp-for="IsStaffRate" class="form-check-input" id="staffCb" />
+         <label asp-for="IsStaffRate" class="form-check-label">I am a Sri Lanka Post staff member (staff rate applies)</label>
+       </div>
+     }
+     <div class="p-3 rounded mb-3" style="background:var(--sl-navy); color:white;">
+       <strong>Estimated Total: </strong><span id="totalEst">Select dates to calculate</span>
+     </div>
+     <div class="d-grid">
+       <button type="submit" class="btn btn-lg fw-bold" style="background:var(--sl-gold); color:var(--sl-navy);">
+         <i class="bi bi-arrow-right-circle-fill me-2"></i>Proceed to Payment
+       </button>
+     </div>
+    </form>
+   </div>
+  </div>
+ </div>
+</div>
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+  <script>
+    function calc() {
+      const ci = new Date(document.getElementById('ci').value);
+      const co = new Date(document.getElementById('co').value);
+      if (isNaN(ci) || isNaN(co)) return;
+      const nights = Math.max(1, Math.round((co - ci) / 86400000));
+      const sel = document.getElementById('roomSel');
+      const rate = sel ? parseFloat(sel.selectedOptions[0].dataset.rate) : @loc.Rooms.First().OutsiderRate;
+      const sc = document.getElementById('staffCb');
+      const staffRates = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(loc.Rooms.ToDictionary(r=>r.RoomLabel, r=>r.StaffRate)));
+      const effectiveRate = (sc && sc.checked && staffRates[sel?.value] > 0)
+                           ? staffRates[sel?.value] : rate;
+      const total = (effectiveRate * nights) + 300;
+      document.getElementById('totalEst').textContent =
+        'LKR ' + total.toLocaleString('en-US',{minimumFractionDigits:2}) +
+        ' (' + nights + ' night(s) × LKR ' + effectiveRate.toLocaleString() + ' + LKR 300 service charge)';
+    }
+    document.getElementById('ci')?.addEventListener('change', calc);
+    document.getElementById('co')?.addEventListener('change', calc);
+    document.getElementById('roomSel')?.addEventListener('change', calc);
+    document.getElementById('staffCb')?.addEventListener('change', calc);
+  </script>
+}

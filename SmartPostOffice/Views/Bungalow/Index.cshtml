@@ -1,0 +1,50 @@
+@model List<SmartPostOffice.Models.BungalowLocation>
+@{ ViewData["Title"] = "Book a Holiday Bungalow"; }
+
+<div class="p-4 mb-4 rounded text-white" style="background:var(--sl-navy);">
+  <h2><i class="bi bi-house-heart-fill me-2"></i>Sri Lanka Post — Postal Holiday Homes</h2>
+  <p class="mb-0">Book a postal bungalow across Sri Lanka. Payment is completed online before your stay.</p>
+</div>
+
+<div class="row g-4">
+  @foreach (var loc in Model)
+  {
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm" style="border-top:4px solid var(--sl-navy);">
+        <div class="card-header" style="background:var(--sl-navy); color:white;">
+          <div class="d-flex align-items-center gap-2">
+            <span style="font-size:1.6rem;">@loc.Emoji</span>
+            <div>
+              <div class="fw-bold">@loc.Name</div>
+              <small style="color:var(--sl-gold);">@loc.Province Province</small>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small mb-2">@loc.Description</p>
+          <table class="table table-sm table-bordered mb-1">
+            <thead class="table-dark"><tr><th>Room</th><th>Outsider</th><th>Staff</th><th>Max</th></tr></thead>
+            <tbody>
+              @foreach (var r in loc.Rooms)
+              {
+                <tr>
+                  <td class="small">@r.RoomLabel</td>
+                  <td class="fw-bold" style="color:var(--sl-red);">LKR @r.OutsiderRate.ToString("N0")</td>
+                  <td class="small">@(r.StaffRate > 0 ? "LKR " + r.StaffRate.ToString("N0") : "N/A")</td>
+                  <td>@r.MaxGuests</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <small class="text-muted">+ LKR 300 service charge · Tel: @loc.Phone</small>
+        </div>
+        <div class="card-footer">
+          <a asp-action="Book" asp-route-locationId="@loc.Id" class="btn w-100 fw-bold"
+             style="background:var(--sl-gold); color:var(--sl-navy);">
+            <i class="bi bi-calendar-check-fill me-1"></i>Book Now
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</div>
