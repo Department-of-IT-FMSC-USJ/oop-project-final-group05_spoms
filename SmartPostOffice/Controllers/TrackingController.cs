@@ -18,33 +18,49 @@ public class TrackingController : Controller
     [HttpPost]
     public IActionResult Track(string trackingInput)
     {
-        ServiceRequest? request = null;
+                // --- EXISTING: try ServiceRequest lookup ---
+            ServiceRequest? request = _db.ServiceRequests
+                .FirstOrDefault(r => r.ReferenceNumber == trackingInput);
 
-        request = _db.ServiceRequests
-            .FirstOrDefault(r => r.ReferenceNumber == trackingInput);
+            if (request == null)
+            {
+                var txn = _db.Transactions
+                    .Include(t => t.ServiceRequest)
+                    .FirstOrDefault(t => t.TrackingNumber == trackingInput);
+                request = txn?.ServiceRequest;
+            }
 
-        if (request == null)
-        {
-            var txn = _db.Transactions
-                .Include(t => t.ServiceRequest)
-                .FirstOrDefault(t => t.TrackingNumber == trackingInput);
-            request = txn?.ServiceRequest;
-        }
+            if (request != null)
+            {
+                // existing parcel tracking logic (unchanged)
+                var history = _db.TrackingHistory
+                    .Where(h => h.ServiceRequestId == request.Id)
+                    .OrderBy(h => h.UpdatedAt)
+                    .ToList();
+                ViewBag.Request      = request;
+                ViewBag.History      = history;
+                ViewBag.TrackingType = "parcel";   // tell view which section to render
+                return View();
+            }
 
-        if (request == null)
-        {
+            // --- NEW: try StampOrder lookup by OrderReference ---
+            var stampOrder = _db.StampOrders
+                .FirstOrDefault(o => o.OrderReference == trackingInput);
+
+            if (stampOrder != null)
+            {
+                var stampHistory = _db.StampTrackingHistories
+                    .Where(h => h.StampOrderId == stampOrder.Id)
+                    .OrderBy(h => h.UpdatedAt)
+                    .ToList();
+                ViewBag.StampOrder   = stampOrder;
+                ViewBag.StampHistory = stampHistory;
+                ViewBag.TrackingType = "stamp";
+                return View();
+            }
+
             ViewBag.Error = "No record found. Check the number and try again.";
             return View();
-        }
-
-        var history = _db.TrackingHistory
-            .Where(h => h.ServiceRequestId == request.Id)
-            .OrderBy(h => h.UpdatedAt)
-            .ToList();
-
-        ViewBag.Request = request;
-        ViewBag.History = history;
-        return View();
     }
 
     [HttpPost]

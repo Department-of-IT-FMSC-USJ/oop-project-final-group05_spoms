@@ -1,0 +1,62 @@
+@using SmartPostOffice.Models
+@using SmartPostOffice.Models.Enums
+@model StampOrder
+@{ ViewData["Title"] = "Update Stamp Order Status"; }
+
+<h4 style="color:var(--sl-navy);">
+    Update Status – <code>@Model.OrderReference</code>
+</h4>
+
+<div class="card p-4 mt-3" style="max-width:520px;">
+    <dl class="row mb-3">
+        <dt class="col-sm-4">Customer</dt>
+        <dd class="col-sm-8">@Model.CustomerName</dd>
+        <dt class="col-sm-4">Stamp Style</dt>
+        <dd class="col-sm-8">@Model.StampStyleName × @Model.Quantity</dd>
+        <dt class="col-sm-4">Delivery Address</dt>
+        <dd class="col-sm-8">@Model.DeliveryAddress</dd>
+        <dt class="col-sm-4">Current Status</dt>
+        <dd class="col-sm-8">
+            <span class="badge bg-primary">@Model.FulfilmentStatus.ToString().Replace("_"," ")</span>
+        </dd>
+    </dl>
+
+    <form asp-action="UpdateStampStatus" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">New Status</label>
+            <div class="mb-3">
+    <label class="form-label fw-semibold">New Status</label>
+            <select name="newStatus" class="form-select">
+                @foreach (StampOrderStatus s in Enum.GetValues(typeof(StampOrderStatus)))
+                {
+                    if (Model.FulfilmentStatus == s)
+                    {
+                        <option value="@((int)s)" selected>@s.ToString().Replace("_", " ")</option>
+                    }
+                    else
+                    {
+                        <option value="@((int)s)">@s.ToString().Replace("_", " ")</option>
+                    }
+                }
+            </select>
+        </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Notes (optional)</label>
+            <textarea name="notes" class="form-control" rows="2"
+                      placeholder="e.g. Dispatched via Colombo sorting center"></textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn"
+                    style="background:var(--sl-navy);color:white;">
+                <i class="bi bi-check-circle me-1"></i>Save Status
+            </button>
+            <a asp-action="OfficerOrders" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

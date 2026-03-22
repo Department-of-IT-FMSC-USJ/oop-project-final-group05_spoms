@@ -75,3 +75,65 @@
   </div>
   </div>
 }
+@if (ViewBag.TrackingType == "stamp" && ViewBag.StampOrder != null)
+{
+    var order   = (StampOrder)ViewBag.StampOrder;
+    var sHist   = (List<StampTrackingHistory>)ViewBag.StampHistory;
+
+    var stages  = new[] {
+        StampOrderStatus.PENDING, StampOrderStatus.PAYMENT_CONFIRMED,
+        StampOrderStatus.PROCESSING, StampOrderStatus.DISPATCHED,
+        StampOrderStatus.DELIVERED
+    };
+    var labels  = new[] { "Pending", "Payment Confirmed", "Processing", "Dispatched", "Delivered" };
+    var icons   = new[] { "clock", "credit-card", "gear", "truck", "house-check" };
+
+    <div class="card mb-4"><div class="card-body row">
+        <div class="col-md-4"><strong>Order Ref:</strong> @order.OrderReference</div>
+        <div class="col-md-4"><strong>Stamp:</strong> @order.StampStyleName × @order.Quantity</div>
+        <div class="col-md-4"><strong>Status:</strong>
+            <span class="badge bg-primary">@order.FulfilmentStatus.ToString().Replace("_"," ")</span>
+        </div>
+    </div></div>
+
+    <div class="card"><div class="card-body">
+        <h5 class="mb-4">Stamp Order Journey</h5>
+        <div class="d-flex justify-content-between position-relative" style="overflow-x:auto;">
+        @for (int i = 0; i < stages.Length; i++)
+        {
+            var stage     = stages[i];
+            var histEntry = sHist.FirstOrDefault(h => h.Status == stage);
+            bool isCompleted = sHist.Any(h => h.Status == stage);
+            bool isCurrent   = order.FulfilmentStatus == stage;
+            string color = isCompleted ? "var(--sl-navy)" : "#ccc";
+
+            <div class="text-center" style="min-width:120px; flex:1;">
+                <div style="font-size:2rem; color:@color;">
+                    <i class="bi bi-@icons[i]-fill"></i>
+                </div>
+                <div class="fw-semibold small" style="color:@color;">@labels[i]</div>
+                @if (histEntry != null)
+                {
+                    <div class="text-muted" style="font-size:11px;">
+                        @histEntry.UpdatedAt.ToString("dd MMM HH:mm")
+                    </div>
+                    @if (!string.IsNullOrEmpty(histEntry.Notes))
+                    {
+                        <div class="text-muted" style="font-size:10px;font-style:italic;">
+                            @histEntry.Notes
+                        </div>
+                    }
+                }
+                @if (isCurrent)
+                {
+                    <span class="badge bg-success mt-1">Current</span>
+                }
+            </div>
+            @if (i < stages.Length - 1)
+            {
+                <div style="flex:1; height:2px; background:@color; margin-top:18px;"></div>
+            }
+        }
+        </div>
+    </div></div>
+}
