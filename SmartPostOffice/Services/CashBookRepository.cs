@@ -18,8 +18,8 @@ namespace SmartPostOffice.Services
 
         public async Task<List<CashBookEntry>> GetEntriesForDateAsync(DateTime date)
             => await _db.CashBookEntries
-                .Include(e => e.Transaction)
-                    .ThenInclude(t => t.ServiceRequest)
+                .Include(e => e.Transaction!)
+                    .ThenInclude(t => t!.ServiceRequest)
                 .Where(e => e.EntryDate.Date == date.Date)
                 .OrderBy(e => e.EntryDate)
                 .ToListAsync();
@@ -27,8 +27,8 @@ namespace SmartPostOffice.Services
         public async Task<List<CashBookEntry>> GetEntriesByTypeAsync(
             DateTime date, ServiceType type)
             => await _db.CashBookEntries
-                .Include(e => e.Transaction)
-                    .ThenInclude(t => t.ServiceRequest)
+                .Include(e => e.Transaction!)
+                    .ThenInclude(t => t!.ServiceRequest)
                 .Where(e => e.EntryDate.Date == date.Date
                          && e.TransactionId != null
                          && e.Transaction!.ServiceRequestId != null

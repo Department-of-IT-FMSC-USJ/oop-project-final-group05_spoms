@@ -1,16 +1,18 @@
 @model SmartPostOffice.Models.Transaction
 @using SmartPostOffice.Models.Enums
-@{ ViewData["Title"] = "Receipt"; }
+@{
+  ViewData["Title"] = "Receipt";
+}
 
 <div class="card" id="receipt" style="max-width:680px; margin:auto;">
   <div class="card-header navy text-center">
     <h4 class="mb-0">📮 Sri Lanka Post — Official Receipt</h4>
   </div>
   <div class="card-body p-4">
-    
+
     <div class="row mb-3">
-      <div class="col-6"><strong>Receipt No:</strong><br/>@Model.ReceiptNumber</div>
-      <div class="col-6 text-end"><strong>Date:</strong><br/>@Model.TransactionDate.ToString("dd MMM yyyy HH:mm")</div>
+      <div class="col-6"><strong>Receipt No:</strong><br />@Model.ReceiptNumber</div>
+      <div class="col-6 text-end"><strong>Date:</strong><br />@Model.TransactionDate.ToString("dd MMM yyyy HH:mm")</div>
     </div>
 
     <div class="text-center p-3 mb-3" style="background:#f0f4ff; border-radius:8px;">
@@ -24,30 +26,42 @@
     <div class="row mb-3">
       <div class="col-6">
         <div class="fw-semibold text-muted small">FROM</div>
-        <div>@Model.ServiceRequest.SenderName</div>
-        <div class="text-muted small">@Model.ServiceRequest.SenderAddress</div>
+        <div>@Model.ServiceRequest?.SenderName</div>
+        <div class="text-muted small">@Model.ServiceRequest?.SenderAddress</div>
       </div>
       <div class="col-6">
         <div class="fw-semibold text-muted small">TO</div>
-        <div>@Model.ServiceRequest.ReceiverName</div>
-        <div class="text-muted small">@Model.ServiceRequest.Destination</div>
+        <div>@Model.ServiceRequest?.ReceiverName</div>
+        <div class="text-muted small">@Model.ServiceRequest?.Destination</div>
       </div>
     </div>
 
     <table class="table table-sm table-bordered mb-3">
-      <tr><th>Service Type</th><td>@Model.ServiceRequest.ServiceType</td></tr>
-      <tr><th>Actual Weight</th><td>@Model.ActualWeightGrams g</td></tr>
-      <tr><th>Payment Method</th><td>@Model.PaymentMethod</td></tr>
-      <tr><th>Final Charge</th><td class="fw-bold">Rs. @Model.FinalCharge</td></tr>
+      <tr>
+        <th>Service Type</th>
+        <td>@Model.ServiceRequest?.ServiceType</td>
+      </tr>
+      <tr>
+        <th>Actual Weight</th>
+        <td>@Model.ActualWeightGrams g</td>
+      </tr>
+      <tr>
+        <th>Payment Method</th>
+        <td>@Model.PaymentMethod</td>
+      </tr>
+      <tr>
+        <th>Final Charge</th>
+        <td class="fw-bold">Rs. @Model.FinalCharge</td>
+      </tr>
     </table>
 
-    @if (Model.ServiceRequest.ServiceType == ServiceType.COD)
+    @if (Model.ServiceRequest?.ServiceType == ServiceType.COD)
     {
       <div class="alert alert-info">
-        <strong>COD Details</strong><br/>
-        Item: @Model.ServiceRequest.ItemDescription<br/>
-        Seller pays post office (FinalCharge): <strong>Rs. @Model.FinalCharge</strong><br/>
-        Buyer pays at door (TotalCODAmount): <strong>Rs. @Model.ServiceRequest.TotalCODAmount</strong>
+        <strong>COD Details</strong><br />
+        Item: @Model.ServiceRequest?.ItemDescription<br />
+        Seller pays post office (FinalCharge): <strong>Rs. @Model.FinalCharge</strong><br />
+        Buyer pays at door (TotalCODAmount): <strong>Rs. @Model.ServiceRequest?.TotalCODAmount</strong>
       </div>
     }
 
