@@ -19,20 +19,27 @@ namespace SmartPostOffice.Controllers
             => View(StampCatalogue.All);
 
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Order(StampOrder model, int stampStyleId)
+        public IActionResult Order(StampOrder model, int stampStyleId,string orderLinesJson)
         {
-            var style = StampCatalogue.All.FirstOrDefault(s => s.Id == stampStyleId);
-            if (style == null) return BadRequest();
+            var style = StampCatalogue.All.FirstOrDefault(s => s.Id == stampStyleId)
+                ?? StampCatalogue.All.First();
 
-            model.StampStyleId = style.Id;
+            model.StampStyleId   = style.Id;
             model.StampStyleName = style.Name;
-            model.PricePerStamp = style.PricePerStamp;
-            model.ServiceCharge = StampCatalogue.FixedServiceCharge;
-
-            if (!ModelState.IsValid) return View("Index", StampCatalogue.All);
-
+            model.PricePerStamp  = style.PricePerStamp;
+            model.ServiceCharge  = StampCatalogue.FixedServiceCharge;
+            model.OrderLinesJson = orderLinesJson;
             model.OrderReference = $"STO-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
-            model.PaymentStatus = "Pending";
+            model.PaymentStatus  = "Pending";
+            model.FulfilmentStatus = StampOrderStatus.PENDING;
+
+            ModelState.Remove("OrderReference");
+            ModelState.Remove("StampStyleName");
+            ModelState.Remove("OrderLinesJson");
+
+            if (!ModelState.IsValid)
+                return View("Index", StampCatalogue.All);
+
             _db.StampOrders.Add(model);
             _db.SaveChanges();
 
@@ -69,6 +76,7 @@ namespace SmartPostOffice.Controllers
             order.PaymentStatus = "Paid";
             order.PaymentReference = result.Reference;
             order.PaidAt = DateTime.Now;
+            order.FulfilmentStatus = StampOrderStatus.PAYMENT_CONFIRMED;
             _db.SaveChanges();
 
             var txn = new Transaction
