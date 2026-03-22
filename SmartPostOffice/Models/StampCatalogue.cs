@@ -6,6 +6,7 @@ namespace SmartPostOffice.Models
         public string  Name             { get; set; } = string.Empty;
         public string  Theme            { get; set; } = string.Empty;
         public decimal PricePerStamp    { get; set; }
+         public string  ImageUrl         { get; set; } = string.Empty;
         public string  ImagePlaceholder { get; set; } = string.Empty;  
     }
 

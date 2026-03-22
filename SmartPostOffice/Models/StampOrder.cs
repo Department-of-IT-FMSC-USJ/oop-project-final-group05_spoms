@@ -28,6 +28,7 @@ namespace SmartPostOffice.Models
         public int StampStyleId { get; set; }
         [Required]
         public string StampStyleName { get; set; } = string.Empty;
+        public string? OrderLinesJson { get; set; }
 
         [Required, Range(1, 25, ErrorMessage = "You can order 1 to 25 stamps.")]
         [Display(Name = "Number of Stamps")]
@@ -41,7 +42,34 @@ namespace SmartPostOffice.Models
         public string? PaymentReference { get; set; }
         public DateTime? PaidAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public decimal CalculateTotal() => (PricePerStamp * Quantity) + ServiceCharge;
+
+       
+public string? OrderLinesJson { get; set; }
+       public decimal CalculateTotal()
+        {
+            // Try to compute from OrderLinesJson if available
+            if (!string.IsNullOrEmpty(OrderLinesJson))
+            {
+                try
+                {
+                    var lines = System.Text.Json.JsonSerializer.Deserialize<List<OrderLine>>(OrderLinesJson);
+                    if (lines != null)
+                        return lines.Sum(l => l.qty * l.price) + ServiceCharge;
+                }
+                catch { }
+            }
+            // Fallback to single-style
+            return (PricePerStamp * Quantity) + ServiceCharge;
+        }
+
         public string GetServiceLabel() => "Stamp Order";
     }
+    public class OrderLine
+    {
+        public int     styleId { get; set; }
+        public string  name    { get; set; } = string.Empty;
+        public int     qty     { get; set; }
+        public decimal price   { get; set; }
+    }
+
 }
