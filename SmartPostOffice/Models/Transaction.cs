@@ -6,14 +6,14 @@ namespace SmartPostOffice.Models
     public class Transaction
     {
         public int Id { get; set; }
-        public int ServiceRequestId { get; set; }
-        public ServiceRequest ServiceRequest { get; set; } = null!;
+        public int? ServiceRequestId { get; set; }
+        public ServiceRequest? ServiceRequest { get; set; } = null!;
 
         [Required]
         [StringLength(30)]
         public string TrackingNumber { get; set; } = string.Empty; // TRK-2024-XXXXXXXX
 
-        [Range(1, 40000)]
+        [Range(0, 40000)]
         public decimal ActualWeightGrams { get; set; }
         public decimal FinalCharge { get; set; }
 

@@ -89,9 +89,24 @@ namespace SmartPostOffice.Controllers
             booking.PaidAt = DateTime.Now;
             _db.SaveChanges();
 
+            var txn = new Transaction
+            {
+                ServiceRequestId = null,
+                TrackingNumber = booking.BookingReference,
+                ActualWeightGrams = 0,
+                FinalCharge = booking.CalculateTotal(),
+                PaymentMethod = "Online",
+                ProcessedByOfficerId = 0,
+                ReceiptNumber = $"ONL-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper(),
+                TransactionDate = DateTime.Now
+            };
+            _db.Transactions.Add(txn);
+            _db.SaveChanges();
+
+
             _db.CashBookEntries.Add(new BungalowEntry
             {
-                TransactionId = null,
+                TransactionId = txn.Id,
                 Amount = booking.CalculateTotal(),
                 PaymentMethod = "Online",
                 EntryType = "CREDIT",

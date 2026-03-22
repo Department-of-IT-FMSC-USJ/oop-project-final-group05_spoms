@@ -44,8 +44,44 @@ public class CashBookController : Controller
                 OnlineTotal = online,
                 Total = cash + online,
                 IsClosed = (bal != null),
+                IsOnlineOnly = false,
                 Balance = bal
             });
+        }
+
+        // Add Bungalow, Stamp, Telemail online-only registers
+        var onlineOnlyRegisters = new[]
+        {
+        ("Bungalow Register",    "BungalowEntry"),
+        ("Stamp Order Register", "StampOrderEntry"),
+        ("Telemail Register",    "TelimailEntry")
+    };
+
+        foreach (var (name, discriminator) in onlineOnlyRegisters)
+        {
+            var amount = await _db.CashBookEntries
+                .Where(e => e.EntryDate.Date == today
+                        && EF.Property<string>(e, "Discriminator") == discriminator)
+                .SumAsync(e => (decimal?)e.Amount) ?? 0m;
+
+            var count = await _db.CashBookEntries
+                .CountAsync(e => e.EntryDate.Date == today
+                            && EF.Property<string>(e, "Discriminator") == discriminator);
+
+            if (amount > 0)
+            {
+                summaries.Add(new
+                {
+                    ServiceType = (ServiceType)0,
+                    RegisterName = name,
+                    CashTotal = 0m,
+                    OnlineTotal = amount,
+                    Total = amount,
+                    IsClosed = false,
+                    IsOnlineOnly = true,
+                    Balance = (SmartPostOffice.Models.DayBalance?)null
+                });
+            }
         }
 
         ViewBag.Today = today.ToString("dd MMM yyyy");
@@ -113,6 +149,37 @@ public class CashBookController : Controller
                 Total = cash + online,
                 Balance = bal
             });
+        }
+        var onlineOnlyRegisters = new[]
+    {
+        ("Bungalow Register",    "BungalowEntry"),
+        ("Stamp Order Register", "StampOrderEntry"),
+        ("Telemail Register",    "TelimailEntry")
+    };
+
+        foreach (var (name, discriminator) in onlineOnlyRegisters)
+        {
+            var amount = await _db.CashBookEntries
+                .Where(e => e.EntryDate.Date == reportDate.Date
+                         && EF.Property<string>(e, "Discriminator") == discriminator)
+                .SumAsync(e => (decimal?)e.Amount) ?? 0m;
+
+            var count = await _db.CashBookEntries
+                .CountAsync(e => e.EntryDate.Date == reportDate.Date
+                              && EF.Property<string>(e, "Discriminator") == discriminator);
+
+            if (amount > 0)
+            {
+                registers.Add(new
+                {
+                    RegisterName = name,
+                    Count = count,
+                    CashTotal = 0m,
+                    OnlineTotal = amount,
+                    Total = amount,
+                    Balance = (SmartPostOffice.Models.DayBalance?)null
+                });
+            }
         }
 
         ViewBag.ReportDate = reportDate.ToString("dd MMMM yyyy");

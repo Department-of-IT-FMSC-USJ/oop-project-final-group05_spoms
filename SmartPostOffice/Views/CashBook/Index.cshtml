@@ -11,7 +11,7 @@
         <h2 style="color:var(--sl-navy);">
             <i class="bi bi-journal-text me-2"></i>Cash Book — @ViewBag.Today
         </h2>
-        <p class="text-muted mb-0">Five service-type registers. Close each register separately.</p>
+        <p class="text-muted mb-0">Five postal registers (Cash) · Three online registers (Bungalow, Stamp, Telemail).</p>
     </div>
     <div class="d-flex gap-2">
         <a asp-action="DailyReport" class="btn btn-outline-primary">
@@ -50,10 +50,13 @@
 @* ── ONE SECTION PER SERVICE TYPE REGISTER ── *@
 @foreach (var summary in summaries)
 {
-    var sectionEntries = Model.Where(
-            e => e.Transaction != null &&
-            e.Transaction.ServiceRequest != null &&
-            e.Transaction.ServiceRequest.ServiceType == (ServiceType)summary.ServiceType).ToList();
+    var sectionEntries = (bool)summary.IsOnlineOnly
+    ? Model.Where(e => e.Transaction != null &&
+                       e.Transaction.ServiceRequest == null &&
+                       e.GetRegisterName() == (string)summary.RegisterName).ToList()
+    : Model.Where(e => e.Transaction != null &&
+                       e.Transaction.ServiceRequest != null &&
+                       e.Transaction.ServiceRequest.ServiceType == (ServiceType)summary.ServiceType).ToList();
 
     <div class="card mb-4">
         <div class="card-header" style="background:var(--sl-navy); color:white;">
@@ -61,8 +64,14 @@
                 <div>
                     <strong>@summary.RegisterName</strong>
                     &nbsp;&nbsp;
-                    <span class="badge bg-success">Cash: LKR @(((decimal)summary.CashTotal).ToString("N2"))</span>
-                    <span class="badge bg-info ms-1">Online: LKR @(((decimal)summary.OnlineTotal).ToString("N2"))</span>
+                    @if ((bool)summary.IsOnlineOnly)
+                    {
+                        <span class="badge bg-info">Online: LKR @(((decimal)summary.OnlineTotal).ToString("N2"))</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Cash: LKR @(((decimal)summary.CashTotal).ToString("N2"))</span>
+                    }
                 </div>
                 <div>
                     <strong>Register Total: LKR @(((decimal)summary.Total).ToString("N2"))</strong>
@@ -88,7 +97,7 @@
                         {
                             <tr>
                                 <td>@entry.EntryDate.ToString("HH:mm")</td>
-                                <td><code>@(entry.Transaction?.ServiceRequest?.ReferenceNumber ?? "—")</code></td>
+                                <td><code>@(entry.Transaction?.ServiceRequest?.ReferenceNumber ?? entry.Transaction?.TrackingNumber ?? "—")</code></td>
                                 <td>
                                     @if (entry.PaymentMethod == "Cash")
                                     {
@@ -119,8 +128,14 @@
             }
 
             <div class="p-3 border-top">
-                @if ((bool)summary.IsClosed)
-                {
+            @if ((bool)summary.IsOnlineOnly)
+            {
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>Online-only register — no physical cash to close.
+                </p>
+            }
+            else if ((bool)summary.IsClosed)
+            {
                     var b = summary.Balance;
                     string cls = b.Status == "BALANCED" ? "alert-success" : "alert-warning";
                     <div class="alert @cls mb-0 py-2">
@@ -150,7 +165,7 @@
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">LKR</span>
-                                    <input type="number" step="0.01" name="physicalCashCounted"                     class="form-control" required
+                                    <input type="number" step="0.01" name="physicalCashCounted" class="form-control" required
                                            placeholder="Count this register's till" />
                                 </div>
                             </div>
