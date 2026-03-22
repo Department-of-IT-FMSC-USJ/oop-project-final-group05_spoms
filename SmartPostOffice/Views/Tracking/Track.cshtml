@@ -29,10 +29,9 @@
   var req = (ServiceRequest)ViewBag.Request;
   var hist = (List<TrackingHistory>)ViewBag.History;
   var stages = new[] { RequestStatus.PENDING, RequestStatus.ACCEPTED,
-    RequestStatus.RECEIVED, RequestStatus.IN_TRANSIT,
     RequestStatus.OUT_FOR_DELIVERY, RequestStatus.DELIVERED };
-  var labels = new[] { "Pending", "Accepted", "Received", "In Transit", "Out for Delivery", "Delivered" };
-  var icons  = new[] { "clock", "check-circle", "building", "truck", "bicycle", "house-check" };
+  var labels = new[] { "Pending", "Accepted", "Out for Delivery", "Delivered" };
+  var icons  = new[] { "clock", "check-circle", "bicycle", "house-check" };
 
   <div class="card mb-4"><div class="card-body row">
     <div class="col-md-4"><strong>Ref:</strong> @req.ReferenceNumber</div>

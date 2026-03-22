@@ -1,0 +1,302 @@
+@using SmartPostOffice.Models
+@using SmartPostOffice.Models.Enums
+@{
+    ViewData["Title"] = "Tracking Management";
+}
+@{
+    var accepted = (List<ServiceRequest>)ViewBag.AcceptedParcels;
+    var outDelivery = (List<ServiceRequest>)ViewBag.OutForDelivery;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="color:var(--sl-navy);"><i class="bi bi-geo-alt-fill me-2"></i>Tracking Management</h2>
+        <p class="text-muted mb-0">Batch dispatch parcels or search and update individual parcels</p>
+    </div>
+</div>
+
+@* ── MORNING DISPATCH ── *@
+<div class="card mb-4">
+    <div class="card-header fw-semibold" style="background:var(--sl-navy); color:white;">
+        <i class="bi bi-bicycle me-2"></i>Morning Dispatch — Mark as Out for Delivery
+        <span class="badge bg-warning text-dark ms-2">@accepted.Count waiting</span>
+    </div>
+    <div class="card-body">
+        @if (accepted.Count == 0)
+        {
+            <div class="alert alert-secondary mb-0">
+                <i class="bi bi-info-circle me-2"></i>No parcels waiting for dispatch right now.
+            </div>
+        }
+        else
+        {
+            <form asp-controller="Tracking" asp-action="BatchStatusUpdate" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="newStatus" value="@((int)RequestStatus.OUT_FOR_DELIVERY)" />
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                    <input type="text" name="notes" class="form-control"
+                           placeholder="e.g. Handed to delivery rider — Colombo South route" />
+                </div>
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead style="background:var(--sl-navy); color:white;">
+                            <tr>
+                                <th style="width:40px;">
+                                    <input type="checkbox" id="selectAllAccepted" class="form-check-input" />
+                                </th>
+                                <th>Reference No.</th>
+                                <th>Service</th>
+                                <th>Sender</th>
+                                <th>Receiver</th>
+                                <th>Destination</th>
+                                <th>Accepted On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in accepted)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selectedIds" value="@r.Id"
+                                               class="form-check-input accepted-check" />
+                                    </td>
+                                    <td><span class="font-monospace small">@r.ReferenceNumber</span></td>
+                                    <td><span class="badge bg-primary">@r.ServiceType</span></td>
+                                    <td>@r.SenderName</td>
+                                    <td>@r.ReceiverName</td>
+                                    <td>@r.Destination</td>
+                                    <td class="text-muted small">@r.CreatedAt.ToString("dd MMM HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-lg px-5"                        style="background:var(--sl-navy); color:white;"
+                        onclick="return confirmBatch('Out for Delivery', '.accepted-check')">
+                    <i class="bi bi-bicycle me-2"></i>Mark Selected as Out for Delivery
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+@* ── END OF DAY CONFIRM ── *@
+<div class="card mb-4">
+    <div class="card-header fw-semibold" style="background:#1E7A45; color:white;">
+        <i class="bi bi-house-check-fill me-2"></i>End of Day — Confirm Delivered
+        <span class="badge bg-warning text-dark ms-2">@outDelivery.Count out with rider</span>
+    </div>
+    <div class="card-body">
+        @if (outDelivery.Count == 0)
+        {
+            <div class="alert alert-secondary mb-0">
+                <i class="bi bi-info-circle me-2"></i>No parcels currently out for delivery.
+            </div>
+        }
+        else
+        {
+            <form asp-controller="Tracking" asp-action="BatchStatusUpdate" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="newStatus" value="@((int)RequestStatus.DELIVERED)" />
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                    <input type="text" name="notes" class="form-control"                           placeholder="e.g. Delivered to receiver at door" />
+                </div>
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead style="background:#1E7A45; color:white;">
+                            <tr>
+                                <th style="width:40px;">
+                                    <input type="checkbox" id="selectAllDelivery" class="form-check-input" />
+                                </th>
+                                <th>Reference No.</th>
+                                <th>Service</th>
+                                <th>Sender</th>
+                                <th>Receiver</th>
+                                <th>Destination</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in outDelivery)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selectedIds" value="@r.Id"
+                                               class="form-check-input delivery-check" />
+                                    </td>
+                                    <td><span class="font-monospace small">@r.ReferenceNumber</span></td>
+                                    <td><span class="badge bg-primary">@r.ServiceType</span></td>
+                                    <td>@r.SenderName</td>
+                                    <td>@r.ReceiverName</td>
+                                    <td>@r.Destination</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-lg px-5"                        style="background:#1E7A45; color:white;"
+                        onclick="return confirmBatch('Delivered', '.delivery-check')">
+                    <i class="bi bi-house-check-fill me-2"></i>Mark Selected as Delivered
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+@* ── INDIVIDUAL SEARCH ── *@
+<div class="card mb-4">
+    <div class="card-header fw-semibold" style="background:var(--sl-gold); color:var(--sl-navy);">
+        <i class="bi bi-search me-2"></i>Search Individual Parcel
+    </div>
+    <div class="card-body">
+        <form asp-controller="Tracking" asp-action="ManageTracking" method="post">
+            @Html.AntiForgeryToken()
+            <div class="input-group">
+                <input type="text" name="trackingInput" class="form-control form-control-lg"
+                       placeholder="e.g. SPO-2026-A3F7C2  or  TRK-2026-XXXXXXXX" required />
+                <button type="submit" class="btn btn-lg" style="background:var(--sl-navy); color:white;">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+            </div>
+        </form>
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3 d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill"></i>@ViewBag.Error
+            </div>
+        }
+    </div>
+</div>
+
+@if (ViewBag.Request != null)
+{
+    var req = (ServiceRequest)ViewBag.Request;
+    var hist = (List<TrackingHistory>)ViewBag.History;
+    var nextStatus = (RequestStatus)ViewBag.NextStatus;
+
+    var stages = new[] { RequestStatus.PENDING, RequestStatus.ACCEPTED,
+                         RequestStatus.OUT_FOR_DELIVERY, RequestStatus.DELIVERED };
+    var labels = new[] { "Pending", "Accepted", "Out for Delivery", "Delivered" };
+    var icons = new[] { "clock", "check-circle", "bicycle", "house-check" };
+
+    string badgeClass = req.Status switch
+    {
+        RequestStatus.PENDING => "bg-warning text-dark",
+        RequestStatus.ACCEPTED => "bg-primary",
+        RequestStatus.OUT_FOR_DELIVERY => "bg-success",
+        RequestStatus.DELIVERED => "bg-dark",
+        _ => "bg-secondary"
+    };
+    string nextLabel = nextStatus == RequestStatus.OUT_FOR_DELIVERY
+        ? "Out for Delivery" : "Delivered";
+    string nextIcon = nextStatus == RequestStatus.OUT_FOR_DELIVERY
+        ? "bicycle" : "house-check-fill";
+
+    <div class="card mb-4">
+        <div class="card-header fw-semibold" style="background:var(--sl-navy); color:white;">
+            <i class="bi bi-info-circle me-2"></i>Parcel Details
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="text-muted small">Reference Number</div>
+                    <div class="fw-semibold">@req.ReferenceNumber</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Service Type</div>
+                    <div class="fw-semibold">@req.ServiceType</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Sender</div>
+                    <div class="fw-semibold">@req.SenderName</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted small">Current Status</div>
+                    <span class="badge @badgeClass fs-6">@req.Status</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-semibold" style="background:var(--sl-navy); color:white;">
+            <i class="bi bi-signpost-split me-2"></i>Parcel Journey
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between" style="overflow-x:auto; padding:10px 0;">
+                @for (int i = 0; i < stages.Length; i++)
+                {
+                    var stage = stages[i];
+                    var histEntry = hist.FirstOrDefault(h => h.Status == stage);
+                    bool isCompleted = hist.Any(h => h.Status == stage);
+                    bool isCurrent = req.Status == stage;
+                    string color = isCompleted ? "var(--sl-navy)" : "#ccc";
+                    <div class="text-center" style="min-width:110px; flex:1;">
+                        <div style="font-size:2rem; color:@color;">
+                            <i class="bi bi-@icons[i]-fill"></i>
+                        </div>
+                        <div class="fw-semibold small" style="color:@color;">@labels[i]</div>
+                        @if (histEntry != null)
+                        {
+                            <div class="text-muted" style="font-size:11px;">
+                                @histEntry.UpdatedAt.ToString("dd MMM HH:mm")
+                            </div>
+                            @if (!string.IsNullOrEmpty(histEntry.Notes))
+                            {
+                                <div class="text-muted fst-italic" style="font-size:10px;">@histEntry.Notes</div>
+                            }
+                        }
+                        @if (isCurrent)
+                        {
+                            <span class="badge bg-success mt-1">Current</span>
+                        }
+                    </div>
+                    @if (i < stages.Length - 1)
+                    {
+                        <div style="flex:1; height:2px; background:@color; margin-top:28px;"></div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-semibold" style="background:var(--sl-gold); color:var(--sl-navy);">
+            <i class="bi bi-arrow-right-circle-fill me-2"></i>Update Status
+        </div>
+        <div class="card-body">
+            <form asp-controller="Tracking" asp-action="ConfirmStatusUpdate" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="serviceRequestId" value="@req.Id" />
+                <input type="hidden" name="newStatus" value="@((int)nextStatus)" />
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        Notes <span class="text-muted fw-normal">(optional)</span>
+                    </label>
+                    <input type="text" name="notes" class="form-control" placeholder="e.g. Handed to delivery rider..." />
+                </div>
+                <button type="submit" class="btn btn-lg px-5" style="background:var(--sl-navy); color:white;"
+                        onclick="return confirm('Confirm: Update status to \'@nextLabel\'?')">
+                    <i class="bi bi-@nextIcon me-2"></i>Mark as @nextLabel
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('selectAllAccepted')?.addEventListener('change', function () {
+            document.querySelectorAll('.accepted-check').forEach(cb => cb.checked = this.checked);
+        });
+        document.getElementById('selectAllDelivery')?.addEventListener('change', function () {
+            document.querySelectorAll('.delivery-check').forEach(cb => cb.checked = this.checked);
+        });
+        function confirmBatch(statusLabel, checkClass) {
+            const checked = document.querySelectorAll(checkClass + ':checked').length;
+            if (checked === 0) { alert('Please select at least one parcel.'); return false; }
+            return confirm(`Mark ${checked} parcel(s) as "${statusLabel}"? This cannot be undone.`);
+        }
+    </script>
+}
