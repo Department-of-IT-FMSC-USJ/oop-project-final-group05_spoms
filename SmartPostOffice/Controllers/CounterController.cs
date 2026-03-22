@@ -47,6 +47,8 @@ public class CounterController : Controller
 
         ViewBag.TodayOnlineTotal = counterOnline + directOnline;
 
+        ViewBag.BungalowBookingsCount = _db.BungalowBookings.Count();
+
         return View();
     }
 

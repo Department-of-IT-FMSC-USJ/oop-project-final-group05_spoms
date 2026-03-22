@@ -14,7 +14,16 @@ namespace SmartPostOffice.Controllers
         { _db = db; _payment = payment; }
 
         public IActionResult Index()
-            => View(BungalowCatalogue.All);
+        {
+
+            if (User.Identity?.IsAuthenticated == true && User.HasClaim(c => c.Type == "OfficerId"))
+            {
+                var bookings = _db.BungalowBookings.OrderByDescending(b => b.PaidAt).ToList();
+                return View(bookings);
+            }
+
+            return View(BungalowCatalogue.All);
+        }
         public IActionResult Book(string locationId)
         {
             var loc = BungalowCatalogue.All.FirstOrDefault(l => l.Id == locationId);
