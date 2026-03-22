@@ -113,9 +113,15 @@
                
                 <form method="post" asp-action="Order" id="orderForm">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" id="orderLinesJson" name="orderLinesJson" value="" />
-                    <input type="hidden" name="Quantity" id="hiddenQty" value="0" />
-                    <input type="hidden" name="StampStyleId" id="hiddenStyleId" value="1" />
+                                
+                        <input type="hidden" name="OrderReference" value="TEMP-REF" />
+                        <input type="hidden" name="StampStyleName" value="TEMP-STYLE" />
+                        <input type="hidden" name="PaymentStatus" value="Pending" />
+                        <input type="hidden" name="CreatedAt" value="@DateTime.Now" />
+                        
+                        <input type="hidden" id="orderLinesJson" name="orderLinesJson" value="" />
+                        <input type="hidden" name="stampStyleId" id="hiddenStyleId" value="1" />
+                        <input type="hidden" name="Quantity" id="hiddenQty" value="0" />
 
                     <div class="mb-2">
                         <label class="form-label fw-semibold small">Full Name</label>
