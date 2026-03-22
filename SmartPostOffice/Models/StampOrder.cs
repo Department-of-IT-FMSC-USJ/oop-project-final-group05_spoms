@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SmartPostOffice.Models.Enums;
 
 namespace SmartPostOffice.Models
 {
@@ -42,7 +43,9 @@ namespace SmartPostOffice.Models
         public DateTime? PaidAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-       
+       public StampOrderStatus FulfilmentStatus { get; set; } = StampOrderStatus.PENDING;
+
+        public ICollection<StampTrackingHistory> TrackingHistory { get; set; }= new List<StampTrackingHistory>();
 public string? OrderLinesJson { get; set; }
        public decimal CalculateTotal()
         {

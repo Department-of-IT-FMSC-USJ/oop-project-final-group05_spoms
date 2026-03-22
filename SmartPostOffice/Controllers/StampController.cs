@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using SmartPostOffice.Data;
 using SmartPostOffice.Models;
 using SmartPostOffice.Services;
+using Microsoft.AspNetCore.Authorization;
+using SmartPostOffice.Models.Enums;
 
 namespace SmartPostOffice.Controllers
 {
@@ -102,6 +104,53 @@ namespace SmartPostOffice.Controllers
             var order = _db.StampOrders.Find(id);
             if (order == null) return NotFound();
             return View(order);
+        }
+
+        [Authorize(AuthenticationSchemes = "OfficerCookies")]
+        public IActionResult OfficerOrders()
+        {
+            var orders = _db.StampOrders
+                .OrderByDescending(o => o.CreatedAt)
+                .ToList();
+
+            return View(orders);
+        }
+        [Authorize(AuthenticationSchemes = "OfficerCookies")]
+        [HttpGet]
+        public IActionResult UpdateStampStatus(int id)
+        {
+            var order = _db.StampOrders.Find(id);
+            if (order == null) return NotFound();
+            return View(order);
+        }
+
+        [Authorize(AuthenticationSchemes = "OfficerCookies")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStampStatus(
+            int id, StampOrderStatus newStatus, string? notes)
+        {
+            var order = await _db.StampOrders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            int officerId = int.Parse(User.FindFirst("OfficerId")!.Value);
+
+            order.FulfilmentStatus = newStatus;
+
+            _db.StampTrackingHistories.Add(new StampTrackingHistory
+            {
+                StampOrderId       = id,
+                Status             = newStatus,
+                UpdatedByOfficerId = officerId,
+                Notes              = notes,
+                UpdatedAt          = DateTime.Now
+            });
+
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                $"Order {order.OrderReference} updated to {newStatus}.";
+
+            return RedirectToAction("OfficerOrders");
         }
     }
 }

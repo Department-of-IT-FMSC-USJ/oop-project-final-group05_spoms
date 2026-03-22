@@ -1,0 +1,76 @@
+@using SmartPostOffice.Models
+@using SmartPostOffice.Models.Enums
+@model List<StampOrder>
+@{ ViewData["Title"] = "Stamp Order Details"; }
+
+<h2 style="color:var(--sl-navy);">
+    <i class="bi bi-bookmark-star-fill me-2"></i>Stamp Order Details
+</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No stamp orders found.</div>
+}
+else
+{
+    <div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Order Ref</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Stamp Style</th>
+                <th>Qty</th>
+                <th>Total (LKR)</th>
+                <th>Payment</th>
+                <th>Fulfilment</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td><code>@o.OrderReference</code></td>
+                <td>@o.CustomerName</td>
+                <td>@o.Phone</td>
+                <td>@o.StampStyleName</td>
+                <td>@o.Quantity</td>
+                <td>@o.CalculateTotal().ToString("N2")</td>
+                <td>
+                    @if (o.PaymentStatus == "Paid")
+                    {
+                        <span class="badge bg-success">Paid</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">@o.PaymentStatus</span>
+                    }
+                </td>
+                <td>
+                    @{
+                        var sc = o.FulfilmentStatus switch {
+                            StampOrderStatus.PENDING           => "secondary",
+                            StampOrderStatus.PAYMENT_CONFIRMED => "primary",
+                            StampOrderStatus.PROCESSING        => "warning",
+                            StampOrderStatus.DISPATCHED        => "info",
+                            StampOrderStatus.DELIVERED         => "success",
+                            _ => "secondary"
+                        };
+                    }
+                    <span class="badge bg-@sc">@o.FulfilmentStatus.ToString().Replace("_"," ")</span>
+                </td>
+                <td>
+                    <a asp-action="UpdateStampStatus"
+                       asp-route-id="@o.Id"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil-square"></i> Update Status
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
