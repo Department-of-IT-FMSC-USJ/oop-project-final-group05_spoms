@@ -1,82 +1,145 @@
 @model List<SmartPostOffice.Models.StampStyle>
-@{
-    ViewData["Title"] = "Special Stamp Order";
-}
 
+@{ 
+    ViewData["Title"] = "Special Stamp Order"; 
+}
 <div class="p-4 mb-4 rounded text-white" style="background:var(--sl-navy);">
     <h2><i class="bi bi-bookmark-star-fill me-2"></i>Special Stamp Order</h2>
-    <p class="mb-1">Select one stamp style. Order 1–25 stamps. Payment is online.</p>
-    <small style="color:var(--sl-gold);">Fixed post office service charge: LKR 500.00 per order</small>
+    <p class="mb-1">Select one or more stamp styles. Maximum <strong>25 stamps total</strong> per order. Payment is online.</p>
+    <small style="color:var(--sl-gold);">Fixed post office service charge: LKR 1,000.00 per order</small>
 </div>
 
-<div class="row">
-   
-    <div class="col-md-7">
-        <h5 class="fw-bold mb-3" style="color:var(--sl-navy);">Step 1 — Select a Stamp Style</h5>
-        <div class="row g-3">
-            @foreach (var s in Model)
-            {
-                <div class="col-6 col-md-4">
-                    <div class="card stamp-card text-center h-100" style="cursor:pointer; border:2px solid transparent;"
-                         data-id="@s.Id" data-name="@s.Name" data-price="@s.PricePerStamp"            data-emoji="@s.ImagePlaceholder"
-                         onclick="selectStamp(this)">
-                        <div class="card-body p-2">
-                            <div style="font-size:2.5rem;">@s.ImagePlaceholder</div>
-                            <div class="fw-semibold small mt-1">@s.Name</div>
-                            <span class="badge" style="background:var(--sl-navy);">LKR @s.PricePerStamp/stamp</span>
-                            <div class="text-muted" style="font-size:0.7rem;">@s.Theme</div>
+<div class="row g-4">
+
+    <div class="col-lg-7">
+        <h5 class="fw-bold mb-3" style="color:var(--sl-navy);">
+            <i class="bi bi-grid-fill me-2"></i>Step 1 — Select Stamp Styles
+        </h5>
+
+        @foreach (var theme in Model.GroupBy(s => s.Theme))
+        {
+            <div class="mb-2">
+                <span class="badge mb-2" style="background:var(--sl-navy); font-size:11px; letter-spacing:1px;">@theme.Key.ToUpper()</span>
+            </div>
+            <div class="row g-3 mb-3">
+                @foreach (var s in theme)
+                {
+                    <div class="col-6 col-md-4">
+                        <div class="card stamp-card h-100"
+                             style="cursor:pointer; border:2px solid #dee2e6; border-radius:10px; overflow:hidden; transition:all 0.2s;"
+                             data-id="@s.Id" data-name="@s.Name"
+                             data-price="@s.PricePerStamp" data-theme="@s.Theme"
+                             data-img="@s.ImageUrl" data-emoji="@s.ImagePlaceholder"
+                             onclick="toggleStamp(this)">
+                            
+                            <div style="height:100px; overflow:hidden; background:#f8f9fa; position:relative;">
+                                <img src="@s.ImageUrl"
+                                     alt="@s.Name"
+                                     style="width:100%; height:100%; object-fit:cover;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                <div style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; font-size:3rem;">
+                                    @s.ImagePlaceholder
+                                </div>
+                            </div>
+                            <div class="card-body p-2 text-center">
+                                <div class="fw-semibold" style="font-size:12px;">@s.Name</div>
+                                <span class="badge mt-1" style="background:var(--sl-red); font-size:11px;">LKR @s.PricePerStamp/stamp</span>
+                               
+                                <div class="qty-control mt-2" id="qty-@s.Id" style="display:none;">
+                                    <div class="input-group input-group-sm justify-content-center">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeQty(@s.Id,-1,event)">−</button>
+                                        <input type="number" id="qtyval-@s.Id" value="1" min="1" max="25"
+                                               class="form-control text-center" style="max-width:50px; font-size:13px;"
+                                               oninput="recalc()" onclick="event.stopPropagation()" />
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeQty(@s.Id,1,event)">+</button>
+                                    </div>
+                                    <div style="font-size:10px; color:var(--sl-navy); margin-top:3px;">
+                                        subtotal: <span id="sub-@s.Id">LKR @s.PricePerStamp</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
     </div>
 
- 
-    <div class="col-md-5">
+  
+    <div class="col-lg-5">
         <div class="card shadow" style="position:sticky; top:1rem; border-top:4px solid var(--sl-gold);">
             <div class="card-header fw-bold" style="background:var(--sl-navy); color:white;">
                 <i class="bi bi-cart-fill me-2"></i>Your Order
             </div>
             <div class="card-body">
-                <form method="post" asp-action="Order">
+
+               
+                <div id="noSelMsg" class="alert alert-warning py-2 small">
+                    <i class="bi bi-arrow-left me-1"></i>Click stamp cards on the left to add them
+                </div>
+
+                
+                <div id="selList" style="display:none;" class="mb-3">
+                    <div class="fw-semibold small mb-2" style="color:var(--sl-navy);">Selected Stamps:</div>
+                    <div id="selItems"></div>
+                </div>
+
+                
+                <div class="mb-3" id="qtyBar" style="display:none;">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Total Stamps: <strong id="totalQtyDisplay">0</strong></span>
+                        <span class="text-muted">Max 25</span>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div id="qtyProgress" class="progress-bar" role="progressbar"
+                             style="width:0%; background:var(--sl-red);" aria-valuenow="0" aria-valuemax="25"></div>
+                    </div>
+                </div>
+
+                
+                <div class="p-3 rounded mb-3" style="background:var(--sl-navy); color:white;">
+                    <div class="d-flex justify-content-between">
+                        <span>Stamps Total:</span><span id="stampsAmt">LKR 0.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Service Charge:</span><span>LKR 1,000.00</span>
+                    </div>
+                    <hr style="border-color:rgba(255,255,255,0.2); margin:6px 0;" />
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total:</span><span id="grandTotal" style="color:var(--sl-gold);">LKR 1,000.00</span>
+                    </div>
+                </div>
+
+               
+                <form method="post" asp-action="Order" id="orderForm">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="stampStyleId" id="selId" value="0" />
+                    <input type="hidden" id="orderLinesJson" name="orderLinesJson" value="" />
+                    <input type="hidden" name="Quantity" id="hiddenQty" value="0" />
+                    <input type="hidden" name="StampStyleId" id="hiddenStyleId" value="1" />
 
-                    <div class="alert alert-warning p-2 small mb-3" id="noSelMsg">
-                        ← Click a stamp style on the left to select it
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Full Name</label>
+                        <input name="CustomerName" class="form-control form-control-sm" required />
                     </div>
-                    <div id="selDisplay" style="display:none;" class="text-center mb-3 p-2 rounded"
-                         style="background:#f8f9fa;">
-                        <span id="selEmoji" style="font-size:2.5rem;"></span>
-                        <div class="fw-bold" id="selName"></div>
-                        <div class="text-muted small" id="selPrice"></div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Phone</label>
+                        <input name="Phone" class="form-control form-control-sm" maxlength="10" required />
                     </div>
-
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Email</label>
+                        <input name="Email" type="email" class="form-control form-control-sm" required />
+                    </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Number of Stamps (1–25)</label>
-                        <input name="Quantity" id="qty" class="form-control" type="number"               min="1" max="25" value="1"
-                               oninput="updateTotal()" required />
-                    </div>
-                    <div class="p-2 rounded mb-3" style="background:var(--sl-navy); color:white;">
-                        Total: <strong id="totalAmt">—</strong>
+                        <label class="form-label fw-semibold small">Delivery Address</label>
+                        <textarea name="DeliveryAddress" class="form-control form-control-sm" rows="2" required></textarea>
                     </div>
 
-                    <div class="mb-2"><label class="form-label fw-semibold">Full Name</label>
-                        <input name="CustomerName" class="form-control" required />
-                    </div>
-                    <div class="mb-2"><label class="form-label fw-semibold">Phone</label>
-                        <input name="Phone" class="form-control" maxlength="10" required />
-                    </div>
-                    <div class="mb-2"><label class="form-label fw-semibold">Email</label>
-                        <input name="Email" type="email" class="form-control" required />
-                    </div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Delivery Address</label>
-                        <textarea name="DeliveryAddress" class="form-control" rows="2" required></textarea>
+                    <div id="overLimitMsg" class="alert alert-danger py-2 small" style="display:none;">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Maximum 25 stamps total per order.
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn fw-bold"
+                        <button type="submit" id="proceedBtn" class="btn fw-bold" disabled
                                 style="background:var(--sl-gold); color:var(--sl-navy);">
                             <i class="bi bi-arrow-right-circle-fill me-2"></i>Proceed to Payment
                         </button>
@@ -85,31 +148,117 @@
             </div>
         </div>
     </div>
+
 </div>
 
 @section Scripts {
-    <script>
-        let selPrice = 0;
-        function selectStamp(el) {
-          document.querySelectorAll('.stamp-card').forEach(c => { c.style.border = '2px solid transparent'; c.style.boxShadow = ''; });
-          el.style.border = '2px solid var(--sl-gold)';
-          el.style.boxShadow = '0 0 10px rgba(201,168,76,0.5)';
-          document.getElementById('selId').value = el.dataset.id;
-          document.getElementById('selEmoji').textContent = el.dataset.emoji;
-          document.getElementById('selName').textContent = el.dataset.name;
-          document.getElementById('selPrice').textContent = 'LKR ' + el.dataset.price + ' per stamp';
-          document.getElementById('noSelMsg').style.display = 'none';
-          document.getElementById('selDisplay').style.display = 'block';
-          selPrice = parseFloat(el.dataset.price);
-          updateTotal();
+<script>
+
+    const selected = {};
+    const MAX = 25;
+    const SERVICE = 1000;
+
+    function toggleStamp(el) {
+        const id    = parseInt(el.dataset.id);
+        const name  = el.dataset.name;
+        const price = parseFloat(el.dataset.price);
+
+        if (selected[id]) {
+            
+            delete selected[id];
+            el.style.border = '2px solid #dee2e6';
+            el.style.boxShadow = '';
+            el.style.transform = '';
+            document.getElementById('qty-' + id).style.display = 'none';
+        } else {
+           
+            selected[id] = { name, price, qty: 1 };
+            el.style.border = '2px solid var(--sl-gold)';
+            el.style.boxShadow = '0 0 12px rgba(212,160,23,0.5)';
+            el.style.transform = 'translateY(-2px)';
+            document.getElementById('qty-' + id).style.display = 'block';
         }
-        function updateTotal() {
-          const qty = parseInt(document.getElementById('qty').value) || 0;
-          if (selPrice === 0) return;
-          const total = (selPrice * qty) + 500;
-          document.getElementById('totalAmt').textContent =
-            'LKR ' + total.toLocaleString('en-US', { minimumFractionDigits: 2 }) +
-            ' (' + qty + ' × LKR ' + selPrice + ' + LKR 500 service charge)';
+        recalc();
+    }
+
+    function changeQty(id, delta, evt) {
+        evt.stopPropagation();
+        if (!selected[id]) return;
+        const inp = document.getElementById('qtyval-' + id);
+        let v = Math.max(1, Math.min(MAX, (parseInt(inp.value) || 1) + delta));
+        inp.value = v;
+        selected[id].qty = v;
+        recalc();
+    }
+
+    function recalc() {
+      
+        for (const id in selected) {
+            const inp = document.getElementById('qtyval-' + id);
+            if (inp) selected[id].qty = Math.max(1, parseInt(inp.value) || 1);
         }
-    </script>
+
+        const ids = Object.keys(selected);
+        const totalQty = ids.reduce((s, id) => s + selected[id].qty, 0);
+        const overLimit = totalQty > MAX;
+
+       
+        const pct = Math.min(100, (totalQty / MAX) * 100);
+        const bar = document.getElementById('qtyProgress');
+        bar.style.width = pct + '%';
+        bar.style.background = overLimit ? '#dc2626' : 'var(--sl-red)';
+        bar.setAttribute('aria-valuenow', totalQty);
+        document.getElementById('totalQtyDisplay').textContent = totalQty;
+        document.getElementById('qtyBar').style.display = ids.length ? 'block' : 'none';
+
+       
+        let stampsTotal = 0;
+        ids.forEach(id => {
+            const item = selected[id];
+            const sub = item.qty * item.price;
+            stampsTotal += sub;
+            const el = document.getElementById('sub-' + id);
+            if (el) el.textContent = 'LKR ' + sub.toFixed(2);
+        });
+
+        document.getElementById('stampsAmt').textContent  = 'LKR ' + stampsTotal.toLocaleString('en-US',{minimumFractionDigits:2});
+        document.getElementById('grandTotal').textContent  = 'LKR ' + (stampsTotal + SERVICE).toLocaleString('en-US',{minimumFractionDigits:2});
+
+        
+        if (ids.length === 0) {
+            document.getElementById('noSelMsg').style.display = 'block';
+            document.getElementById('selList').style.display  = 'none';
+        } else {
+            document.getElementById('noSelMsg').style.display = 'none';
+            document.getElementById('selList').style.display  = 'block';
+            let html = '';
+            ids.forEach(id => {
+                const item = selected[id];
+                html += `<div class="d-flex justify-content-between small mb-1 p-1 rounded" style="background:#f8f9fa;">
+                    <span>${item.name}</span>
+                    <span class="fw-bold">${item.qty} × LKR ${item.price} = <span style="color:var(--sl-red);">LKR ${(item.qty*item.price).toFixed(2)}</span></span>
+                </div>`;
+            });
+            document.getElementById('selItems').innerHTML = html;
+        }
+
+       
+        document.getElementById('overLimitMsg').style.display = overLimit ? 'block' : 'none';
+
+      
+        const lines = ids.map(id => ({
+            styleId: parseInt(id),
+            name: selected[id].name,
+            qty: selected[id].qty,
+            price: selected[id].price
+        }));
+        document.getElementById('orderLinesJson').value  = JSON.stringify(lines);
+        document.getElementById('hiddenQty').value       = totalQty;
+        document.getElementById('hiddenStyleId').value   = ids.length ? parseInt(ids[0]) : 1;
+
+        
+        const btn = document.getElementById('proceedBtn');
+        btn.disabled = (ids.length === 0 || overLimit);
+    }
+</script>
 }
