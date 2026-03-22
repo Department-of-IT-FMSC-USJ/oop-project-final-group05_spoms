@@ -28,8 +28,7 @@ namespace SmartPostOffice.Models
         public int StampStyleId { get; set; }
         [Required]
         public string StampStyleName { get; set; } = string.Empty;
-        public string? OrderLinesJson { get; set; }
-
+        
         [Required, Range(1, 25, ErrorMessage = "You can order 1 to 25 stamps.")]
         [Display(Name = "Number of Stamps")]
         public int Quantity { get; set; }
