@@ -1,5 +1,7 @@
 @model List<SmartPostOffice.Models.TelimailMessage>
-@{ ViewData["Title"] = "Telemail Inbox"; }
+@{
+  ViewData["Title"] = "Telemail Inbox";
+}
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h2 style="color:var(--sl-navy);"><i class="bi bi-inbox-fill me-2"></i>Telemail Inbox</h2>
@@ -16,7 +18,16 @@ else
   <div class="table-responsive">
     <table class="table table-hover align-middle">
       <thead style="background:var(--sl-navy); color:white;">
-        <tr><th>Reference</th><th>From</th><th>To</th><th>Destination Office</th><th>Status</th><th>Submitted</th></tr>
+        <tr>
+          <th>Reference</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Destination Office</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Urgency</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
         @foreach (var m in Model)
@@ -28,13 +39,51 @@ else
             <td>@m.DestinationPostOffice</td>
             <td>
               @if (m.MessageStatus == "Submitted")
-                { <span class="badge bg-warning text-dark">Submitted</span> }
+              {
+                <span class="badge bg-warning text-dark">Submitted</span>
+              }
               else if (m.MessageStatus == "Forwarded")
-                { <span class="badge bg-info">Forwarded</span> }
+              {
+
+                <span class="badge bg-info">Forwarded</span>
+              }
               else
-                { <span class="badge bg-success">Delivered</span> }
+              {
+
+                <span class="badge bg-success">Delivered</span>
+              }
             </td>
             <td class="small text-muted">@m.CreatedAt.ToString("dd MMM HH:mm")</td>
+            <td>
+              @{
+                var mins = (int)(DateTime.Now - m.CreatedAt).TotalMinutes;
+              }
+              @if (m.MessageStatus == "Submitted")
+              {
+                if (mins > 120)
+                {
+                  <span class="badge bg-danger">⚠ @mins min — OVERDUE</span>
+                }
+                else if (mins > 60)
+                {
+                  <span class="badge bg-warning text-dark">⚠ @mins min ago</span>
+                }
+                else
+                {
+                  <span class="badge bg-success">@mins min ago</span>
+                }
+              }
+              else
+              {
+                <span class="text-muted small">—</span>
+              }
+            </td>
+            <td>
+              <a asp-controller="Telimail" asp-action="Detail" asp-route-id="@m.Id"       class="btn btn-sm"
+                 style="background:var(--sl-navy); color:white;">
+                <i class="bi bi-eye-fill me-1"></i>View & Forward
+              </a>
+            </td>
           </tr>
         }
       </tbody>

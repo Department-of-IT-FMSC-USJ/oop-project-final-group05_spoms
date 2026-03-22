@@ -119,5 +119,28 @@ namespace SmartPostOffice.Controllers
                           .ToList();
             return View(msgs);
         }
+
+        [Authorize(AuthenticationSchemes = "OfficerCookies")]
+        public IActionResult Detail(int id)
+        {
+            var msg = _db.TelimailMessages.Find(id);
+            if (msg == null) return NotFound();
+            return View(msg);
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "OfficerCookies")]
+        public IActionResult UpdateStatus(int id, string newStatus)
+        {
+            var msg = _db.TelimailMessages.Find(id);
+            if (msg == null) return NotFound();
+
+            msg.MessageStatus = newStatus;
+            msg.HandledBy = User.Identity?.Name;
+            _db.SaveChanges();
+
+            TempData["SuccessMessage"] = $"Telemail {msg.TelimailReference} marked as {newStatus}.";
+            return RedirectToAction("Inbox");
+        }
     }
 }
