@@ -73,9 +73,23 @@ namespace SmartPostOffice.Controllers
             msg.PaidAt = DateTime.Now;
             _db.SaveChanges();
 
+            var txn = new Transaction
+            {
+                ServiceRequestId = null,
+                TrackingNumber = msg.TelimailReference,
+                ActualWeightGrams = 0,
+                FinalCharge = msg.CalculateTotal(),
+                PaymentMethod = "Online",
+                ProcessedByOfficerId = 0,
+                ReceiptNumber = $"ONL-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper(),
+                TransactionDate = DateTime.Now
+            };
+            _db.Transactions.Add(txn);
+            _db.SaveChanges();
+
             _db.CashBookEntries.Add(new TelimailEntry
             {
-                TransactionId = null,
+                TransactionId = txn.Id,
                 Amount = msg.CalculateTotal(),
                 PaymentMethod = "Online",
                 EntryType = "CREDIT",

@@ -6,7 +6,7 @@ namespace SmartPostOffice.Models
     {
         public int Id { get; set; }
         public int? TransactionId { get; set; }
-        public Transaction Transaction { get; set; } = null!;
+        public Transaction? Transaction { get; set; } 
 
         public decimal Amount { get; set; }
 

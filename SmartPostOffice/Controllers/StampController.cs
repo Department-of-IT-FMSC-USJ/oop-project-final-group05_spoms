@@ -8,7 +8,7 @@ namespace SmartPostOffice.Controllers
     public class StampController : Controller
     {
         private readonly PostOfficeDbContext _db;
-        private readonly IPaymentService     _payment;
+        private readonly IPaymentService _payment;
 
         public StampController(PostOfficeDbContext db, IPaymentService payment)
         { _db = db; _payment = payment; }
@@ -22,15 +22,15 @@ namespace SmartPostOffice.Controllers
             var style = StampCatalogue.All.FirstOrDefault(s => s.Id == stampStyleId);
             if (style == null) return BadRequest();
 
-            model.StampStyleId   = style.Id;
+            model.StampStyleId = style.Id;
             model.StampStyleName = style.Name;
-            model.PricePerStamp  = style.PricePerStamp;
-            model.ServiceCharge  = StampCatalogue.FixedServiceCharge;
+            model.PricePerStamp = style.PricePerStamp;
+            model.ServiceCharge = StampCatalogue.FixedServiceCharge;
 
             if (!ModelState.IsValid) return View("Index", StampCatalogue.All);
 
-            model.OrderReference = $"STO-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000,9999)}";
-            model.PaymentStatus  = "Pending";
+            model.OrderReference = $"STO-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
+            model.PaymentStatus = "Pending";
             _db.StampOrders.Add(model);
             _db.SaveChanges();
 
@@ -41,16 +41,16 @@ namespace SmartPostOffice.Controllers
         {
             var order = _db.StampOrders.Find(id);
             if (order == null) return NotFound();
-            ViewBag.Amount       = order.CalculateTotal();
-            ViewBag.Reference    = order.OrderReference;
+            ViewBag.Amount = order.CalculateTotal();
+            ViewBag.Reference = order.OrderReference;
             ViewBag.ServiceLabel = order.GetServiceLabel();
-            ViewBag.BookingId    = id;
-            ViewBag.Module       = "Stamp";
+            ViewBag.BookingId = id;
+            ViewBag.Module = "Stamp";
             return View("~/Views/Payment/Pay.cshtml");
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(int bookingId, string cardNumber,string expiryDate, string cvv,string cardHolderName)
+        public async Task<IActionResult> Pay(int bookingId, string cardNumber, string expiryDate, string cvv, string cardHolderName)
         {
             var order = _db.StampOrders.Find(bookingId);
             if (order == null) return NotFound();
@@ -64,18 +64,33 @@ namespace SmartPostOffice.Controllers
                 return RedirectToAction("Pay", new { id = bookingId });
             }
 
-            order.PaymentStatus    = "Paid";
+            order.PaymentStatus = "Paid";
             order.PaymentReference = result.Reference;
-            order.PaidAt           = DateTime.Now;
+            order.PaidAt = DateTime.Now;
             _db.SaveChanges();
+
+            var txn = new Transaction
+            {
+                ServiceRequestId = null,
+                TrackingNumber = order.OrderReference,
+                ActualWeightGrams = 0,
+                FinalCharge = order.CalculateTotal(),
+                PaymentMethod = "Online",
+                ProcessedByOfficerId = 0,
+                ReceiptNumber = $"ONL-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper(),
+                TransactionDate = DateTime.Now
+            };
+            _db.Transactions.Add(txn);
+            _db.SaveChanges();
+
 
             _db.CashBookEntries.Add(new StampOrderEntry
             {
-                TransactionId = null,
-                Amount        = order.CalculateTotal(),
+                TransactionId = txn.Id,
+                Amount = order.CalculateTotal(),
                 PaymentMethod = "Online",
-                EntryType     = "CREDIT",
-                EntryDate     = DateTime.Now
+                EntryType = "CREDIT",
+                EntryDate = DateTime.Now
             });
             _db.SaveChanges();
 

@@ -30,7 +30,9 @@ namespace SmartPostOffice.Services
                 .Include(e => e.Transaction)
                     .ThenInclude(t => t.ServiceRequest)
                 .Where(e => e.EntryDate.Date == date.Date
-                         && e.Transaction.ServiceRequest.ServiceType == type)
+                         && e.TransactionId != null
+                         && e.Transaction!.ServiceRequestId != null
+                         && e.Transaction!.ServiceRequest!.ServiceType == type)
                 .OrderBy(e => e.EntryDate)
                 .ToListAsync();
 
@@ -38,7 +40,8 @@ namespace SmartPostOffice.Services
             => await _db.CashBookEntries
                 .Where(e => e.EntryDate.Date == date.Date
                          && e.TransactionId != null
-                         && e.Transaction.ServiceRequest.ServiceType == type
+                         && e.Transaction!.ServiceRequestId != null
+                         && e.Transaction!.ServiceRequest!.ServiceType == type
                          && e.PaymentMethod == "Cash")
                 .SumAsync(e => (decimal?)e.Amount) ?? 0m;
 
@@ -46,7 +49,8 @@ namespace SmartPostOffice.Services
             => await _db.CashBookEntries
                 .Where(e => e.EntryDate.Date == date.Date
                          && e.TransactionId != null
-                         && e.Transaction.ServiceRequest.ServiceType == type
+                         && e.Transaction!.ServiceRequestId != null
+                         && e.Transaction!.ServiceRequest!.ServiceType == type
                          && e.PaymentMethod == "Online")
                 .SumAsync(e => (decimal?)e.Amount) ?? 0m;
 
@@ -72,6 +76,7 @@ namespace SmartPostOffice.Services
             => await _db.CashBookEntries
                 .CountAsync(e => e.EntryDate.Date == date.Date
                              && e.TransactionId != null
-                             && e.Transaction.ServiceRequest.ServiceType == type);
+                             && e.Transaction!.ServiceRequestId != null
+                             && e.Transaction!.ServiceRequest!.ServiceType == type);
     }
 }
