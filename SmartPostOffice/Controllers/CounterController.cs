@@ -26,6 +26,10 @@ public class CounterController : Controller
         ViewBag.PendingCount = await _db.ServiceRequests
             .CountAsync(r => r.Status == RequestStatus.PENDING);
 
+        ViewBag.TelimailPendingCount = await _db.TelimailMessages
+            .CountAsync(m => m.PaymentStatus == "Paid"
+                          && m.MessageStatus == "Submitted");
+
         ViewBag.TodayCount = await _db.Transactions
             .CountAsync(t => t.TransactionDate.Date == DateTime.Today);
 

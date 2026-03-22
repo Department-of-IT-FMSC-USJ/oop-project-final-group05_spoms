@@ -1,0 +1,152 @@
+@model SmartPostOffice.Models.TelimailMessage
+@{
+    ViewData["Title"] = "Telemail Detail";
+}
+
+@{
+    var mins = (int)(DateTime.Now - Model.CreatedAt).TotalMinutes;
+    string urgencyClass = mins > 120 ? "danger" : mins > 60 ? "warning" : "success";
+    string urgencyText = mins > 120 ? $"⚠ OVERDUE — {mins} minutes since submission"
+                        : $"Submitted {mins} minutes ago";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="color:var(--sl-navy);"><i class="bi bi-chat-square-text-fill me-2"></i>Telemail Detail</h2>
+        <p class="text-muted mb-0">Reference: <strong>@Model.TelimailReference</strong></p>
+    </div>
+    <a asp-action="Inbox" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Back to Inbox
+    </a>
+</div>
+
+@* Urgency Banner *@
+@if (Model.MessageStatus == "Submitted")
+{
+    <div class="alert alert-@urgencyClass fw-semibold mb-4">
+        <i class="bi bi-clock-fill me-2"></i>@urgencyText — Must be forwarded within 2 hours of submission.
+    </div>
+}
+
+@* TM-01 Form Display *@
+<div class="card mb-4">
+    <div class="card-header fw-semibold" style="background:var(--sl-navy); color:white;">
+        <i class="bi bi-file-text-fill me-2"></i>TM-01 — Telemail Message Form
+    </div>
+    <div class="card-body">
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 rounded" style="background:#f0f4ff; border-left:4px solid var(--sl-navy);">
+                    <div class="fw-bold mb-2" style="color:var(--sl-navy);">Part A — Sender</div>
+                    <div><span class="text-muted small">Name:</span> <strong>@Model.SenderName</strong></div>
+                    <div><span class="text-muted small">NIC:</span> @Model.SenderNIC</div>
+                    <div><span class="text-muted small">Phone:</span> @Model.SenderPhone</div>
+                    <div><span class="text-muted small">Email:</span> @Model.SenderEmail</div>
+                    <div><span class="text-muted small">Address:</span> @Model.SenderAddress</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 rounded" style="background:#fffbf0; border-left:4px solid var(--sl-gold);">
+                    <div class="fw-bold mb-2" style="color:var(--sl-navy);">Recipient</div>
+                    <div><span class="text-muted small">Name:</span> <strong>@Model.RecipientName</strong></div>
+                    <div><span class="text-muted small">Address:</span> @Model.RecipientAddress</div>
+                    <div class="mt-2"><span class="text-muted small">Destination Post Office:</span></div>
+                    <div class="fw-bold" style="color:var(--sl-red);">@Model.DestinationPostOffice</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 rounded mb-3" style="background:#f8f9fa; border:2px dashed #aaa;">
+            <div class="fw-bold mb-2" style="color:var(--sl-navy);">Message Content</div>
+            <div style="font-size:1.05rem; line-height:1.8;">@Model.MessageText</div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="text-muted small">Submitted</div>
+                <div class="fw-semibold">@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Charge</div>
+                <div class="fw-semibold">LKR @Model.TelimailCharge.ToString("N2")</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Payment</div>
+                <div class="fw-semibold">@Model.PaymentStatus</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Current Status</div>
+                @if (Model.MessageStatus == "Submitted")
+                {
+                    <span class="badge bg-warning text-dark fs-6">Submitted</span>
+                }
+                else if (Model.MessageStatus == "Forwarded")
+                {
+
+                    <span class="badge bg-info fs-6">Forwarded</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-success fs-6">Delivered</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Action Buttons *@
+@if (Model.MessageStatus != "Delivered")
+{
+    <div class="card">
+        <div class="card-header fw-semibold" style="background:var(--sl-gold); color:var(--sl-navy);">
+            <i class="bi bi-arrow-right-circle-fill me-2"></i>Officer Actions — Part B
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                Call <strong>@Model.DestinationPostOffice</strong> and read out the message.
+                Then update the status below.
+            </p>
+            <div class="d-flex gap-3">
+                @if (Model.MessageStatus == "Submitted")
+                {
+                    <form asp-action="UpdateStatus" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="Forwarded" />
+                        <button type="submit" class="btn btn-lg"            style="background:var(--sl-navy); color:white;"
+                                onclick="return confirm('Confirm: Mark as Forwarded to @Model.DestinationPostOffice?')">
+                            <i class="bi bi-telephone-fill me-2"></i>Mark as Forwarded
+                        </button>
+                    </form>
+                }
+                @if (Model.MessageStatus == "Forwarded")
+                {
+                    <form asp-action="UpdateStatus" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="Delivered" />
+                        <button type="submit" class="btn btn-lg btn-success"
+                                onclick="return confirm('Confirm: Mark as Delivered?')">
+                            <i class="bi bi-check-circle-fill me-2"></i>Mark as Delivered
+                        </button>
+                    </form>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(Model.HandledBy))
+            {
+                <div class="text-muted small mt-3">
+                    <i class="bi bi-person-fill me-1"></i>Last handled by: @Model.HandledBy
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-success">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        This Telemail has been delivered. Handled by: <strong>@Model.HandledBy</strong>
+    </div>
+}
