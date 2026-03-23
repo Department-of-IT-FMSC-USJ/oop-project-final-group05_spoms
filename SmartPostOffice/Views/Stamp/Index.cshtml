@@ -12,9 +12,9 @@
 <div class="row g-4">
 
     <div class="col-lg-7">
-        <h5 class="fw-bold mb-3" style="color:var(--sl-navy);">
+        @* <h5 class="fw-bold mb-3" style="color:var(--sl-navy);">
             <i class="bi bi-grid-fill me-2"></i>Step 1 — Select Stamp Styles
-        </h5>
+        </h5> *@
 
         @foreach (var theme in Model.GroupBy(s => s.Theme))
         {
@@ -35,7 +35,7 @@
                             <div style="height:100px; overflow:hidden; background:#f8f9fa; position:relative;">
                                 <img src="@s.ImageUrl"
                                      alt="@s.Name"
-                                     style="width:100%; height:100%; object-fit:cover;"
+                                     style="width:100%; height:100%; object-fit:contain;padding:5px;"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                                 <div style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; font-size:3rem;">
                                     @s.ImagePlaceholder
