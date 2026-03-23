@@ -81,7 +81,7 @@
                             Postal Address <span style="color:var(--sl-red)">*</span>
                         </label>
                         <textarea asp-for="SenderAddress" class="form-control" rows="3"
-                                  placeholder="Full postal address including town and postcode"></textarea>
+                                  placeholder="Full postal address including town "></textarea>
                         <span asp-validation-for="SenderAddress" class="text-danger small"></span>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                             @(isCOD ? "Delivery Address" : "Postal Address") <span style="color:var(--sl-red)">*</span>
                         </label>
                         <textarea asp-for="ReceiverAddress" class="form-control" rows="3"
-                                  placeholder="Full postal address including town and postcode"></textarea>
+                                  placeholder="Full postal address including town "></textarea>
                         <span asp-validation-for="ReceiverAddress" class="text-danger small"></span>
                     </div>
                 </div>

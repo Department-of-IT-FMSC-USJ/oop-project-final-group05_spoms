@@ -11,6 +11,7 @@
             color: white;
             font-weight: 600;
         }
+
         .section-title {
             color: var(--sl-navy);
             font-weight: 700;
@@ -24,11 +25,13 @@
             padding: 12px;
             text-align: center;
         }
+
         .charge-amount {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--sl-navy);
         }
+
         .required-star {
             color: var(--sl-red);
         }
@@ -45,7 +48,7 @@
             Both Reference Number and Tracking Number will be generated together.
         </p>
     </div>
-    <a asp-controller="Counter" asp-action="Dashboard"    class="btn btn-outline-secondary ms-auto">
+    <a asp-controller="Counter" asp-action="Dashboard" class="btn btn-outline-secondary ms-auto">
         <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
     </a>
 </div>
@@ -74,36 +77,36 @@
                     <label asp-for="ServiceType" class="form-label fw-semibold">
                         Service Type <span class="required-star">*</span>
                     </label>
-                    <select asp-for="ServiceType"                        id="serviceTypeSelect"
-                            asp-items="Html.GetEnumSelectList<ServiceType>()"       class="form-select form-select-lg">
+                    <select asp-for="ServiceType" id="serviceTypeSelect"
+                            asp-items="Html.GetEnumSelectList<ServiceType>()" class="form-select form-select-lg">
                     </select>
                     <span asp-validation-for="ServiceType" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
-                        @if (Model.ServiceType.ToString() == "COD")
-                        {
-                            <div class="alert alert-warning d-flex gap-2 align-items-start mb-0" style="font-size:13px;">
-                                <i class="bi bi-info-circle-fill mt-1 flex-shrink-0" style="color:var(--sl-gold);"></i>
-                                <div>
-                                    The post office will collect <strong>Postage Charge + Seller's Profit Amount</strong>
-                                    from the buyer upon delivery.<br />
-                                    <span style="opacity:0.8;">
-                                        Example: If postage = Rs.500 and profit = Rs.300,
-                                        the buyer pays <strong>Rs.800</strong> total.
-                                    </span>
-                                </div>
+                    @if (Model.ServiceType.ToString() == "COD")
+                    {
+                        <div class="alert alert-warning d-flex gap-2 align-items-start mb-0" style="font-size:13px;">
+                            <i class="bi bi-info-circle-fill mt-1 flex-shrink-0" style="color:var(--sl-gold);"></i>
+                            <div>
+                                The post office will collect <strong>Postage Charge + Seller's Profit Amount</strong>
+                                from the buyer upon delivery.<br />
+                                <span style="opacity:0.8;">
+                                    Example: If postage = Rs.500 and profit = Rs.300,
+                                    the buyer pays <strong>Rs.800</strong> total.
+                                </span>
                             </div>
-                        }
-                        else
-                        {
-                            <div class="alert alert-info mb-0 mt-3 mt-md-0">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>COD Service?</strong> Fill in Item Description and
-                                Seller Profit Amount fields that will appear below.
-                            </div>
-                        }
-                    </div>
-                </div>           
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0 mt-3 mt-md-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>COD Service?</strong> Fill in Item Description and
+                            Seller Profit Amount fields that will appear below.
+                        </div>
+                    }
+                </div>
+            </div>
             <div id="codFields" class="mt-3" style="display:none;">
                 <div class="card" style="border: 2px solid var(--sl-gold);">
                     <div class="card-header" style="background: var(--sl-gold); color: var(--sl-navy);">
@@ -119,7 +122,7 @@
                                     Item Description <span class="required-star">*</span>
                                 </label>
                                 <textarea asp-for="ItemDescription" class="form-control" rows="3"
-                                        placeholder="e.g., Blue T-Shirt Size M, Mobile Phone Cover, Handmade Bag"></textarea>
+                                          placeholder="e.g., Blue T-Shirt Size M, Mobile Phone Cover, Handmade Bag"></textarea>
                                 <span asp-validation-for="ItemDescription" class="text-danger small"></span>
                                 <div class="text-muted mt-1" style="font-size:12px;">
                                     <i class="bi bi-info-circle me-1"></i>Helps the post office identify the parcel
@@ -132,7 +135,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">Rs.</span>
                                     <input asp-for="SellerProfitAmount" id="sellerProfit" class="form-control"
-                                        placeholder="1000.00" step="0.01" min="0" />
+                                           placeholder="1000.00" step="0.01" min="0" />
                                 </div>
                                 <span asp-validation-for="SellerProfitAmount" class="text-danger small"></span>
                                 <div class="text-muted mt-1" style="font-size:12px;">
@@ -163,7 +166,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-person"></i>
                             </span>
-                            <input asp-for="SenderName"                    class="form-control"                               placeholder="Full name of sender" />
+                            <input asp-for="SenderName" class="form-control" placeholder="Full name of sender" />
                         </div>
                         <span asp-validation-for="SenderName" class="text-danger small"></span>
                     </div>
@@ -175,7 +178,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-telephone"></i>
                             </span>
-                            <input asp-for="SenderPhone" class="form-control"  placeholder="07XXXXXXXX" />
+                            <input asp-for="SenderPhone" class="form-control" placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="SenderPhone" class="text-danger small"></span>
                     </div>
@@ -210,7 +213,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-person"></i>
                             </span>
-                            <input asp-for="ReceiverName"           class="form-control"                      placeholder="Full name of receiver" />
+                            <input asp-for="ReceiverName" class="form-control" placeholder="Full name of receiver" />
                         </div>
                         <span asp-validation-for="ReceiverName" class="text-danger small"></span>
                     </div>
@@ -222,7 +225,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-telephone"></i>
                             </span>
-                            <input asp-for="ReceiverPhone"   class="form-control" placeholder="07XXXXXXXX" />
+                            <input asp-for="ReceiverPhone" class="form-control" placeholder="07XXXXXXXX" />
                         </div>
                         <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
                     </div>
@@ -234,7 +237,7 @@
                             <span class="input-group-text">
                                 <i class="bi bi-house"></i>
                             </span>
-                            <input asp-for="ReceiverAddress"     class="form-control"                placeholder="Street, City" />
+                            <input asp-for="ReceiverAddress" class="form-control" placeholder="Street, City" />
                         </div>
                         <span asp-validation-for="ReceiverAddress" class="text-danger small"></span>
                     </div>
@@ -251,7 +254,7 @@
         <div class="card-body">
             <div class="row g-4">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label asp-for="Destination" class="form-label fw-semibold">
                         Destination <span class="required-star">*</span>
                     </label>
@@ -259,7 +262,7 @@
                         <span class="input-group-text">
                             <i class="bi bi-geo-alt"></i>
                         </span>
-                        <input asp-for="Destination"                       class="form-control"     placeholder="e.g. Kandy" />
+                        <input asp-for="Destination" class="form-control" placeholder="e.g. Kandy" />
                     </div>
                     <span asp-validation-for="Destination" class="text-danger small"></span>
                 </div>
@@ -277,19 +280,20 @@
                 </div>-->
 
                 @* Actual Weight *@
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold">
                         Actual Weight (g) <span class="required-star">*</span>
                     </label>
                     <div class="input-group">
-                        <input type="number"  id="walkInWeight" name="actualWeightGrams" class="form-control" placeholder="Weighed on scale"   min="1" max="40000" required />
+                        <input type="number" id="walkInWeight" name="actualWeightGrams" class="form-control"
+                               placeholder="Weighed on scale" min="1" max="40000" required />
                         <span class="input-group-text">g</span>
                     </div>
                     <div class="form-text">Enter the weight from the counter scale.</div>
                 </div>
 
                 @* Charge Preview *@
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold">Charge Preview</label>
                     <div class="charge-box">
                         <div class="text-muted small mb-1">Postage Charge</div>
@@ -313,13 +317,20 @@
                     </label>
                     <div class="d-flex gap-4">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paymentMethod"                       id="payCash"         value="Cash"
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="payCash" value="Cash"
                                    checked />
                             <label class="form-check-label fw-semibold" for="payCash">
                                 <i class="bi bi-cash-coin me-1"></i>Cash
                             </label>
                         </div>
                         
+                    </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="cashReceived" required />
+                        <label class="form-check-label fw-semibold text-success" for="cashReceived">
+                            <i class="bi bi-check-circle-fill me-1"></i>Cash received from customer
+                        </label>
+                        <div class="form-text">Officer must tick this before confirming the transaction.</div>
                     </div>
                 </div>
             </div>
@@ -332,7 +343,7 @@
         <button type="submit" class="btn btn-success btn-lg px-5">
             <i class="bi bi-check-circle-fill me-2"></i>Confirm Walk-in Transaction
         </button>
-        <a asp-controller="Counter" asp-action="Dashboard"           class="btn btn-outline-secondary btn-lg">
+        <a asp-controller="Counter" asp-action="Dashboard" class="btn btn-outline-secondary btn-lg">
             <i class="bi bi-x-circle me-1"></i>Cancel
         </a>
     </div>
@@ -405,11 +416,11 @@
         }
 
         function updateCharge() {
-                const w = parseFloat(document.getElementById('walkInWeight').value);
-                const svc = enumMap[document.getElementById('serviceTypeSelect').value] || document.getElementById('serviceTypeSelect').value;
+            const w = parseFloat(document.getElementById('walkInWeight').value);
+            const svc = enumMap[document.getElementById('serviceTypeSelect').value] || document.getElementById('serviceTypeSelect').value;
 
-                if (!isNaN(w) && w > 0) {
-                    const charge = calcCharge(svc, w);
+            if (!isNaN(w) && w > 0) {
+                const charge = calcCharge(svc, w);
                 document.getElementById('walkInCharge').textContent = 'Rs. ' + charge;
 
                 // If COD — also show Total COD Amount (charge + seller profit)

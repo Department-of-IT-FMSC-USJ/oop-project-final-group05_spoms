@@ -1,66 +1,91 @@
 @model SmartPostOffice.Models.TelimailMessage
-@{ ViewData["Title"] = "Send Telemail"; }
-<div class="row justify-content-center"><div class="col-md-8">
-  <div class="card shadow">
-    <div class="card-header" style="background:var(--sl-navy); color:white;">
-      <h4 class="mb-0"><i class="bi bi-chat-square-text-fill me-2"></i>Telemail — Form TM-01 (Online)</h4>
-      <small style="color:var(--sl-gold);">Same legal status as a Telegram · Delivered within 2 hours · LKR 250 flat</small>
-    </div>
-    <div class="card-body">
-      <form method="post" asp-action="Send">
-        @Html.AntiForgeryToken()
-        <!-- Part A: Sender -->
-        <div class="p-3 mb-4 rounded" style="background:#f0f4ff; border-left:4px solid var(--sl-navy);">
-          <h6 class="fw-bold" style="color:var(--sl-navy);">Part A — Sender Details (Completed by Customer)</h6>
-          <div class="row">
-            <div class="col-md-6 mb-3"><label asp-for="SenderName" class="form-label fw-semibold"></label>
-              <input asp-for="SenderName" class="form-control" /><span asp-validation-for="SenderName" class="text-danger small"></span></div>
-            <div class="col-md-6 mb-3"><label asp-for="SenderNIC" class="form-label fw-semibold"></label>
-              <input asp-for="SenderNIC" class="form-control" /><span asp-validation-for="SenderNIC" class="text-danger small"></span></div>
+@{
+  ViewData["Title"] = "Send Telemail";
+}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
+           style="background:var(--sl-navy); color:white;">
+        <h4 class="mb-0"><i class="bi bi-chat-square-text-fill me-2"></i>Telemail — Form TM-01 (Online)</h4>
+        <small style="color:#ffd700; font-size:0.85rem; font-weight:500; white-space:nowrap;">
+          <i class="bi bi-shield-check me-1"></i>Same legal status as a Telegram &nbsp;·&nbsp;
+          <i class="bi bi-clock me-1"></i>Delivered within 2 hours &nbsp;·&nbsp;
+          <i class="bi bi-tag me-1"></i>LKR 250 flat
+        </small>
+      </div>
+      <div class="card-body">
+        <form method="post" asp-action="Send">
+          @Html.AntiForgeryToken()
+          <!-- Part A: Sender -->
+          <div class="p-3 mb-4 rounded" style="background:#f0f4ff; border-left:4px solid var(--sl-navy);">
+            <h6 class="fw-bold" style="color:var(--sl-navy);">Part A — Sender Details (Completed by Customer)</h6>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label asp-for="SenderName" class="form-label fw-semibold"></label>
+                <input asp-for="SenderName" class="form-control" /><span asp-validation-for="SenderName"
+                                                                         class="text-danger small"></span>
+              </div>
+              <div class="col-md-6 mb-3"><label asp-for="SenderNIC" class="form-label fw-semibold"></label>
+                <input asp-for="SenderNIC" class="form-control" /><span asp-validation-for="SenderNIC"
+                                                                        class="text-danger small"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label asp-for="SenderPhone" class="form-label fw-semibold"></label>
+                <input asp-for="SenderPhone" class="form-control" /><span asp-validation-for="SenderPhone"
+                                                                          class="text-danger small"></span>
+              </div>
+              <div class="col-md-6 mb-3"><label asp-for="SenderEmail" class="form-label fw-semibold"></label>
+                <input asp-for="SenderEmail" class="form-control" /><span asp-validation-for="SenderEmail"
+                                                                          class="text-danger small"></span>
+              </div>
+            </div>
+            <div class="mb-2"><label asp-for="SenderAddress" class="form-label fw-semibold"></label>
+              <input asp-for="SenderAddress" class="form-control" /><span asp-validation-for="SenderAddress"
+                                                                          class="text-danger small"></span>
+            </div>
           </div>
-          <div class="row">
-            <div class="col-md-6 mb-3"><label asp-for="SenderPhone" class="form-label fw-semibold"></label>
-              <input asp-for="SenderPhone" class="form-control" /><span asp-validation-for="SenderPhone" class="text-danger small"></span></div>
-            <div class="col-md-6 mb-3"><label asp-for="SenderEmail" class="form-label fw-semibold"></label>
-              <input asp-for="SenderEmail" class="form-control" /><span asp-validation-for="SenderEmail" class="text-danger small"></span></div>
+          <!-- Recipient -->
+          <div class="p-3 mb-4 rounded" style="background:#fffbf0; border-left:4px solid var(--sl-gold);">
+            <h6 class="fw-bold" style="color:var(--sl-navy);">Recipient Details</h6>
+            <div class="mb-3"><label asp-for="RecipientName" class="form-label fw-semibold"></label>
+              <input asp-for="RecipientName" class="form-control" /><span asp-validation-for="RecipientName"
+                                                                          class="text-danger small"></span>
+            </div>
+            <div class="mb-3"><label asp-for="RecipientAddress" class="form-label fw-semibold"></label>
+              <textarea asp-for="RecipientAddress" class="form-control" rows="2"></textarea>
+              <span asp-validation-for="RecipientAddress" class="text-danger small"></span>
+            </div>
+            <div class="mb-2"><label asp-for="DestinationPostOffice" class="form-label fw-semibold"></label>
+              <input asp-for="DestinationPostOffice" class="form-control" placeholder="e.g. Kandy Main Post Office" />
+              <span asp-validation-for="DestinationPostOffice" class="text-danger small"></span>
+            </div>
           </div>
-          <div class="mb-2"><label asp-for="SenderAddress" class="form-label fw-semibold"></label>
-            <input asp-for="SenderAddress" class="form-control" /><span asp-validation-for="SenderAddress" class="text-danger small"></span></div>
+          <!-- Message -->
+          <div class="mb-3">
+            <label asp-for="MessageText" class="form-label fw-semibold">Message <span
+              class="text-danger">*</span></label>
+              <textarea asp-for="MessageText" class="form-control" rows="5" maxlength="500" id="msgTxt"
+                        oninput="cnt(this)"></textarea>
+              <div class="d-flex justify-content-between">
+                <span asp-validation-for="MessageText" class="text-danger small"></span>
+                <span class="text-muted small"><span id="cc">0</span>/500</span>
+              </div>
+              <small class="text-muted">Note: Offensive, insulting, or vulgar messages will not be accepted.</small>
+            </div>
+            <div class="p-2 rounded mb-3" style="background:var(--sl-navy); color:white;">
+              <strong>Telemail Charge:</strong> LKR 250.00 (flat rate) — paid online at next step
+            </div>
+            <div class="d-grid"><button type="submit" class="btn btn-lg fw-bold"
+                                        style="background:var(--sl-gold); color:var(--sl-navy);">
+              <i class="bi bi-send-fill me-2"></i>Proceed to Payment
+            </button></div>
+          </form>
         </div>
-        <!-- Recipient -->
-        <div class="p-3 mb-4 rounded" style="background:#fffbf0; border-left:4px solid var(--sl-gold);">
-          <h6 class="fw-bold" style="color:var(--sl-navy);">Recipient Details</h6>
-          <div class="mb-3"><label asp-for="RecipientName" class="form-label fw-semibold"></label>
-            <input asp-for="RecipientName" class="form-control" /><span asp-validation-for="RecipientName" class="text-danger small"></span></div>
-          <div class="mb-3"><label asp-for="RecipientAddress" class="form-label fw-semibold"></label>
-            <textarea asp-for="RecipientAddress" class="form-control" rows="2"></textarea>
-            <span asp-validation-for="RecipientAddress" class="text-danger small"></span></div>
-          <div class="mb-2"><label asp-for="DestinationPostOffice" class="form-label fw-semibold"></label>
-            <input asp-for="DestinationPostOffice" class="form-control" placeholder="e.g. Kandy Main Post Office" />
-            <span asp-validation-for="DestinationPostOffice" class="text-danger small"></span></div>
-        </div>
-        <!-- Message -->
-        <div class="mb-3">
-          <label asp-for="MessageText" class="form-label fw-semibold">Message <span class="text-danger">*</span></label>
-          <textarea asp-for="MessageText" class="form-control" rows="5" maxlength="500"
-                    id="msgTxt" oninput="cnt(this)"></textarea>
-          <div class="d-flex justify-content-between">
-            <span asp-validation-for="MessageText" class="text-danger small"></span>
-            <span class="text-muted small"><span id="cc">0</span>/500</span>
-          </div>
-          <small class="text-muted">Note: Offensive, insulting, or vulgar messages will not be accepted.</small>
-        </div>
-        <div class="p-2 rounded mb-3" style="background:var(--sl-navy); color:white;">
-          <strong>Telemail Charge:</strong> LKR 250.00 (flat rate) — paid online at next step
-        </div>
-        <div class="d-grid"><button type="submit" class="btn btn-lg fw-bold" style="background:var(--sl-gold); color:var(--sl-navy);">
-          <i class="bi bi-send-fill me-2"></i>Proceed to Payment
-        </button></div>
-      </form>
+      </div>
     </div>
   </div>
-</div></div>
-@section Scripts {
-  <partial name="_ValidationScriptsPartial" />
-  <script>function cnt(el){ document.getElementById('cc').textContent=el.value.length; }</script>
-}
+  @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>function cnt(el) { document.getElementById('cc').textContent = el.value.length; }</script>
+  }
