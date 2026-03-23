@@ -86,20 +86,12 @@ public class CounterController : Controller
 
         decimal charge = _chargeService.CalculateCharge(request.ServiceType, actualWeightGrams);
         if (request.ServiceType == ServiceType.COD && request.SellerProfitAmount.HasValue)
-        {
-
             request.TotalCODAmount = charge + request.SellerProfitAmount.Value;
-        }
-        _db.ServiceRequests.Update(request);
+
+        request.Status = RequestStatus.ACCEPTED;
 
         string trackingNum = $"TRK-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         string receiptNum = $"RCP-{DateTime.Now.Year}-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
-        request.Status = RequestStatus.ACCEPTED;
-
-        if (request.ServiceType == ServiceType.COD && request.SellerProfitAmount.HasValue)
-            request.TotalCODAmount = charge + request.SellerProfitAmount.Value;
-
-        _db.ServiceRequests.Update(request);
 
         var transaction = new Transaction
         {
@@ -111,18 +103,33 @@ public class CounterController : Controller
             ProcessedByOfficerId = officerId,
             ReceiptNumber = receiptNum
         };
-        _db.Transactions.Add(transaction);
 
-        _db.TrackingHistory.Add(new TrackingHistory
+        using var dbTransaction = await _db.Database.BeginTransactionAsync();
+        try
         {
-            ServiceRequestId = serviceRequestId,
-            Status = RequestStatus.ACCEPTED,
-            UpdatedByOfficerId = officerId
-        });
+            _db.ServiceRequests.Update(request);
+            _db.Transactions.Add(transaction);
 
-        await _db.SaveChangesAsync();
-        var registerEntry = CreateRegisterEntry(request.ServiceType, charge, paymentMethod, transaction.Id);
-        await _cashBook.AddEntryAsync(registerEntry);
+            _db.TrackingHistory.Add(new TrackingHistory
+            {
+                ServiceRequestId = serviceRequestId,
+                Status = RequestStatus.ACCEPTED,
+                UpdatedByOfficerId = officerId
+            });
+
+            await _db.SaveChangesAsync();
+            var registerEntry = CreateRegisterEntry(request.ServiceType, charge, paymentMethod, transaction.Id);
+            await _cashBook.AddEntryAsync(registerEntry);
+
+            await dbTransaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await dbTransaction.RollbackAsync();
+            ViewBag.Error = "A database error occurred. Please try again. No data has been saved.";
+            var freshRequest = await _db.ServiceRequests.FindAsync(serviceRequestId);
+            return View("ConfirmTransaction", freshRequest);
+        }
 
         return RedirectToAction("Receipt", new { transactionId = transaction.Id });
     }
@@ -155,36 +162,48 @@ public class CounterController : Controller
         model.ReferenceNumber = refNum;
         model.Status = RequestStatus.ACCEPTED;
         model.CreatedAt = DateTime.Now;
-        _db.ServiceRequests.Add(model);
-        await _db.SaveChangesAsync();
 
-        decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
-        if (model.ServiceType == ServiceType.COD && model.SellerProfitAmount.HasValue)
+        using var dbTransaction = await _db.Database.BeginTransactionAsync();
+        try
         {
-            model.TotalCODAmount = charge + model.SellerProfitAmount.Value;
+            _db.ServiceRequests.Add(model);
+            await _db.SaveChangesAsync();
+
+            decimal charge = _chargeService.CalculateCharge(model.ServiceType, actualWeightGrams);
+            if (model.ServiceType == ServiceType.COD && model.SellerProfitAmount.HasValue)
+
+                model.TotalCODAmount = charge + model.SellerProfitAmount.Value;
+
+            var transaction = new Transaction
+            {
+                ServiceRequestId = model.Id,
+                TrackingNumber = trackingNum,
+                ActualWeightGrams = actualWeightGrams,
+                FinalCharge = charge,
+                PaymentMethod = paymentMethod,
+                ProcessedByOfficerId = officerId,
+                ReceiptNumber = receiptNum
+            };
+            _db.Transactions.Add(transaction);
+            _db.TrackingHistory.Add(new TrackingHistory
+            {
+                ServiceRequestId = model.Id,
+                Status = RequestStatus.ACCEPTED,
+                UpdatedByOfficerId = officerId
+            });
+            await _db.SaveChangesAsync();
+            var registerEntry = CreateRegisterEntry(model.ServiceType, charge, paymentMethod, transaction.Id);
+            await _cashBook.AddEntryAsync(registerEntry);
+
+            await dbTransaction.CommitAsync();
+            return RedirectToAction("Receipt", new { transactionId = transaction.Id });
         }
-        var transaction = new Transaction
+        catch (Exception)
         {
-            ServiceRequestId = model.Id,
-            TrackingNumber = trackingNum,
-            ActualWeightGrams = actualWeightGrams,
-            FinalCharge = charge,
-            PaymentMethod = paymentMethod,
-            ProcessedByOfficerId = officerId,
-            ReceiptNumber = receiptNum
-        };
-        _db.Transactions.Add(transaction);
-        _db.TrackingHistory.Add(new TrackingHistory
-        {
-            ServiceRequestId = model.Id,
-            Status = RequestStatus.ACCEPTED,
-            UpdatedByOfficerId = officerId
-        });
-        await _db.SaveChangesAsync();
-        var registerEntry = CreateRegisterEntry(model.ServiceType, charge, paymentMethod, transaction.Id);
-        await _cashBook.AddEntryAsync(registerEntry);
-
-        return RedirectToAction("Receipt", new { transactionId = transaction.Id });
+            await dbTransaction.RollbackAsync();
+            ViewBag.Error = "A database error occurred. Please try again. No data has been saved.";
+            return View(model);
+        }
     }
     private CashBookEntry CreateRegisterEntry(
     ServiceType serviceType, decimal amount, string paymentMethod, int transactionId)
