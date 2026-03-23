@@ -141,8 +141,7 @@
                     <label asp-for="EstimatedWeightGrams" class="form-label">
                         Estimated Weight(g) <span style="color:var(--sl-red)">*</span>
                     </label>
-                    <input asp-for="EstimatedWeightGrams" class="form-control" step="1" min="1"
-                           max="50000" />
+                    <input asp-for="EstimatedWeightGrams" class="form-control" value="" placeholder="e.g. 500" step="1" min="1" max="50000" />
                     <span asp-validation-for="EstimatedWeightGrams" class="text-danger small"></span>
                 </div>
                 <div class="col-md-4">
