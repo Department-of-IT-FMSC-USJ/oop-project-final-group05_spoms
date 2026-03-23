@@ -35,7 +35,43 @@ else
                 <td><code>@o.OrderReference</code></td>
                 <td>@o.CustomerName</td>
                 <td>@o.Phone</td>
-                <td>@o.StampStyleName</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(o.OrderLinesJson))
+                    {
+                        try 
+                        {
+                            var lines = System.Text.Json.JsonSerializer.Deserialize<List<SmartPostOffice.Models.OrderLine>>(o.OrderLinesJson!);
+                            
+                            @if (lines != null && lines.Any()) {
+                                <details class="stamp-details">
+                                    <summary class="text-primary fw-bold" style="cursor:pointer; font-size: 0.85rem;">
+                                        <i class="bi bi-box-seam me-1"></i> View all stamp styles 
+                                    </summary>
+                                    
+                                    <div class="mt-2 p-2 border rounded bg-light" style="min-width: 250px; max-height: 200px; overflow-y: auto;">
+                                        @foreach (var line in lines)
+                                        {
+                                            <div class="mb-1 border-bottom pb-1 text-start" style="font-size: 0.8rem;">
+                                                <div class="fw-bold text-dark">@line.name</div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="badge bg-secondary">Qty: @line.qty</span>
+                                                    <span class="text-muted">@@ LKR @line.price.ToString("N0")</span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </details>
+                            }
+                        }
+                        catch {
+                            <span class="small">@o.StampStyleName (x@o.Quantity)</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="small">@o.StampStyleName</span> <span class="badge bg-secondary">x@o.Quantity</span>
+                    }
+                </td>   
                 <td>@o.Quantity</td>
                 <td>@o.CalculateTotal().ToString("N2")</td>
                 <td>
