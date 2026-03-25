@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,83 +15,90 @@
     rel="stylesheet" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<style>
-        .main-nav .dropdown-menu {
-            background: var(--sl-navy);
-            border: none;
-            border-top: 3px solid var(--sl-gold);
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-            min-width: 230px;
-            padding: 6px 0;
-            margin-top: 0 !important;
-        }
-        .main-nav .dropdown-item {
-            color: rgba(255,255,255,0.85);
-            font-size: 13.5px;
-            font-weight: 500;
-            padding: 10px 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.18s;
-        }
-        .main-nav .dropdown-item:hover,
-        .main-nav .dropdown-item:focus {
-            background: var(--sl-red);
-            color: #fff;
-            padding-left: 24px;
-        }
-        .main-nav .dropdown-divider {
-            border-color: rgba(255,255,255,0.12);
-            margin: 4px 0;
-        }
-        .main-nav .dropdown-header {
-            color: var(--sl-gold);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            padding: 8px 18px 4px;
-        }
-        .main-nav .nav-item.dropdown:hover > .nav-link,
-        .main-nav .nav-item.dropdown .nav-link.show {
-            color: #fff !important;
-            background: var(--sl-red-dark);
-            border-bottom-color: var(--sl-gold);
-        }
+    <style>
+            .main-nav .dropdown-menu {
+                background: var(--sl-navy);
+                border: none;
+                border-top: 3px solid var(--sl-gold);
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+                min-width: 230px;
+                padding: 6px 0;
+                margin-top: 0 !important;
+            }
+
+            .main-nav .dropdown-item {
+                color: rgba(255, 255, 255, 0.85);
+                font-size: 13.5px;
+                font-weight: 500;
+                padding: 10px 18px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: all 0.18s;
+            }
+
+            .main-nav .dropdown-item:hover,
+            .main-nav .dropdown-item:focus {
+                background: var(--sl-red);
+                color: #fff;
+                padding-left: 24px;
+            }
+
+            .main-nav .dropdown-divider {
+                border-color: rgba(255, 255, 255, 0.12);
+                margin: 4px 0;
+            }
+
+            .main-nav .dropdown-header {
+                color: var(--sl-gold);
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1.2px;
+                text-transform: uppercase;
+                padding: 8px 18px 4px;
+            }
+
+            .main-nav .nav-item.dropdown:hover>.nav-link,
+            .main-nav .nav-item.dropdown .nav-link.show {
+                color: #fff !important;
+                background: var(--sl-red-dark);
+                border-bottom-color: var(--sl-gold);
+            }
         
-        .officer-badge {
-            background: var(--sl-gold);
-            color: var(--sl-navy);
-            font-weight: 700;
-            font-size: 12px;
-            padding: 5px 14px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        .logout-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: rgba(255,255,255,0.9) !important;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 5px 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .logout-btn:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-            color: #fff !important;
-        }
+            .officer-badge {
+                background: var(--sl-gold);
+                color: var(--sl-navy);
+                font-weight: 700;
+                font-size: 12px;
+                padding: 5px 14px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                white-space: nowrap;
+            }
+
+            .logout-btn {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                color: rgba(255, 255, 255, 0.9) !important;
+                font-size: 13px;
+                font-weight: 500;
+                padding: 5px 14px;
+                border-radius: 6px;
+                transition: all 0.2s;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .logout-btn:hover {
+                background: #dc2626;
+                border-color: #dc2626;
+                color: #fff !important;
+            }
     </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -114,9 +122,8 @@
     <header class="site-header">
         <div class="container d-flex align-items-center justify-content-between">
             <a href="/" class="brand-link d-flex align-items-center gap-3 text-decoration-none">
-                <img src="https://slpost.gov.lk/wp-content/uploads/2019/12/DOP_newlogo_web.jpg" 
-                 alt="SL Post Logo" 
-                 style="height: 60px; width: auto; object-fit: contain;" />
+                <img src="https://slpost.gov.lk/wp-content/uploads/2019/12/DOP_newlogo_web.jpg" alt="SL Post Logo"
+                     style="height: 60px; width: auto; object-fit: contain;" />
             
                 <div>
                     <div class="brand-title" style="line-height: 1.1;">MailMate</div>
@@ -134,7 +141,7 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                
-                     @if (User.Identity?.IsAuthenticated == true)
+                @if (User.Identity?.IsAuthenticated == true)
                 {
                     <ul class="navbar-nav me-auto">
 
@@ -153,8 +160,8 @@
 
                         
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
                                 <i class="bi bi-clipboard-check-fill me-1"></i>Process Services
                             </a>
                             <ul class="dropdown-menu">
@@ -169,7 +176,9 @@
                                         <i class="bi bi-person-walking"></i>Walk-In Process
                                     </a>
                                 </li>
-                                <li><div class="dropdown-divider"></div></li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
                                 <li><span class="dropdown-header">Tracking</span></li>
                                 <li>
                                     <a class="dropdown-item" asp-controller="Tracking" asp-action="ManageTracking">
@@ -181,8 +190,8 @@
 
                         
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
                                 <i class="bi bi-grid-fill me-1"></i>Other Services
                             </a>
                             <ul class="dropdown-menu">
@@ -197,13 +206,11 @@
                                         <i class="bi bi-bookmark-star-fill"></i>Stamp Order Details
                                     </a>
                                 </li>
-                                <li><div class="dropdown-divider"></div></li>
-                                <li><span class="dropdown-header">Telemail</span></li>
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Telimail" asp-action="Index">
-                                        <i class="bi bi-chat-square-text-fill"></i>Telemail Details
-                                    </a>
+                                    <div class="dropdown-divider"></div>
                                 </li>
+                                <li><span class="dropdown-header">Telemail</span></li>
+                                
                                 <li>
                                     <a class="dropdown-item" asp-controller="Telimail" asp-action="Inbox">
                                         <i class="bi bi-inbox-fill"></i>Process Telemail
@@ -220,8 +227,8 @@
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
                                 <i class="bi bi-journal-text me-1"></i>Counter Operations
                             </a>
                             <ul class="dropdown-menu">
@@ -258,7 +265,7 @@
                 }
                 else
                 {
-                     <ul class="navbar-nav me-auto">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house-fill me-1"></i>Home
@@ -292,7 +299,7 @@
                     </ul>
 
                     <a asp-controller="Auth" asp-action="Login" class="btn ms-3"
-                       style="background:var(--sl-gold); color:var(--sl-navy); font-weight:700; border:none; padding:8px 18px;">
+                           style="background:var(--sl-gold); color:var(--sl-navy); font-weight:700; border:none; padding:8px 18px;">
                         <i class="bi bi-person-badge-fill me-1"></i>Officer Login
                     </a>
                 }
@@ -326,81 +333,94 @@
     </main>
 
     <footer class="site-footer">
-    <div class="footer-top py-5">
-        <div class="container">
-            <div class="row g-4">
+        <div class="footer-top py-5">
+            <div class="container">
+                <div class="row g-4">
                 
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-logo d-flex align-items-center gap-2 mb-3">
-                        <i class="bi bi-envelope-paper-fill fs-3 text-white"></i> 
-                        <span class="fs-4 fw-bold text-white">Sri Lanka Post</span>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-logo d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-envelope-paper-fill fs-3 text-white"></i>
+                            <span class="fs-4 fw-bold text-white">Sri Lanka Post</span>
+                        </div>
+                        <p class="footer-desc text-white-50">
+                            Serving Sri Lanka since 1798. Connecting communities island-wide across all 9 provinces
+                            through 4,738 post offices island-wide.
+                        </p>
                     </div>
-                    <p class="footer-desc text-white-50">
-                        Serving Sri Lanka since 1798. Connecting communities island-wide across all 9 provinces through 4,738 post offices island-wide.
-                    </p>
-                </div>
 
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Services</div>
-                    <div class="row g-0">
-                        <div class="col-6">
-                            <ul class="footer-links list-unstyled">
-                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryLetter" class="text-decoration-none">Ordinary Letter</a></li>
-                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryParcel" class="text-decoration-none">Ordinary Parcel</a></li>
-                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=SpeedPost" class="text-decoration-none">Speed Post</a></li>
-                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=RegisteredMail" class="text-decoration-none">Registered Mail</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-6">
-                            <ul class="footer-links list-unstyled">
-                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=COD" class="text-decoration-none">COD</a></li>
-                                <li class="mb-2"><a asp-controller="Bungalow" asp-action="Index" class="text-decoration-none">Bungalow Booking</a></li>
-                                <li class="mb-2"><a asp-controller="Stamp" asp-action="Index" class="text-decoration-none">Stamp Order</a></li>
-                                <li class="mb-2"><a asp-controller="Telimail" asp-action="Index" class="text-decoration-none">Tele mail</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-heading mb-4 text-warning fw-bold text-uppercase"
+                             style="letter-spacing: 1px; font-size: 0.9rem;">Services</div>
+                        <div class="row g-0">
+                            <div class="col-6">
+                                <ul class="footer-links list-unstyled">
+                                    <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryLetter"
+                                                            class="text-decoration-none">Ordinary Letter</a></li>
+                                        <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=OrdinaryParcel"
+                                                                class="text-decoration-none">Ordinary Parcel</a></li>
+                                            <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=SpeedPost"
+                                                                    class="text-decoration-none">Speed Post</a></li>
+                                                <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=RegisteredMail"
+                                                                        class="text-decoration-none">Registered Mail</a></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-6">
+                                                <ul class="footer-links list-unstyled">
+                                                    <li class="mb-2"><a href="/ServiceRequest/Create?serviceType=COD"
+                                                                            class="text-decoration-none">COD</a></li>
+                                                        <li class="mb-2"><a asp-controller="Bungalow" asp-action="Index"
+                                                                                class="text-decoration-none">Bungalow Booking</a></li>
+                                                            <li class="mb-2"><a asp-controller="Stamp" asp-action="Index"
+                                                                                    class="text-decoration-none">Stamp Order</a></li>
+                                                                <li class="mb-2"><a asp-controller="Telimail" asp-action="Index"
+                                                                                        class="text-decoration-none">Tele mail</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                <div class="col-lg-2 col-md-6">
-                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Support</div>
-                    <ul class="footer-links list-unstyled">
-                        <li class="mb-2"><a asp-controller="Tracking" asp-action="Track" class="text-decoration-none">Track Parcel</a></li>
+                                                    <div class="col-lg-2 col-md-6">
+                                                        <div class="footer-heading mb-4 text-warning fw-bold text-uppercase"
+                                                             style="letter-spacing: 1px; font-size: 0.9rem;">Support</div>
+                                                        <ul class="footer-links list-unstyled">
+                                                            <li class="mb-2"><a asp-controller="Tracking" asp-action="Track"
+                                                                                    class="text-decoration-none">Track Parcel</a></li>
 
-                    </ul>
-                </div>
+                                                            </ul>
+                                                        </div>
 
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-heading mb-4 text-warning fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">Contact Us</div>
-                    <div class="footer-contact-info text-white-50">
-                        <div class="d-flex align-items-start gap-2 mb-3">
-                            <i class="bi bi-geo-alt-fill text-warning mt-1"></i>
-                            <span>310, D.R. Wijewardena Mawatha, Colombo 01000</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <i class="bi bi-telephone-fill text-warning"></i>
-                            <span>+94-112-328-301</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-envelope-fill text-warning"></i>
-                            <span>info@slpost.lk</span>
-                        </div>
-                    </div>
-                </div>
+                                                        <div class="col-lg-3 col-md-6">
+                                                            <div class="footer-heading mb-4 text-warning fw-bold text-uppercase"
+                                                                 style="letter-spacing: 1px; font-size: 0.9rem;">Contact Us</div>
+                                                            <div class="footer-contact-info text-white-50">
+                                                                <div class="d-flex align-items-start gap-2 mb-3">
+                                                                    <i class="bi bi-geo-alt-fill text-warning mt-1"></i>
+                                                                    <span>310, D.R. Wijewardena Mawatha, Colombo 01000</span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center gap-2 mb-3">
+                                                                    <i class="bi bi-telephone-fill text-warning"></i>
+                                                                    <span>+94-112-328-301</span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <i class="bi bi-envelope-fill text-warning"></i>
+                                                                    <span>info@slpost.lk</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom py-3 border-top border-secondary">
-        <div class="container text-center text-muted small">
-            © 2026 Sri Lanka Post — Department of Posts. Smart Post Office Management System.
-        </div>
-    </div>
-</footer>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="footer-bottom py-3 border-top border-secondary">
+                                                <div class="container text-center text-muted small">
+                                                    © 2026 Sri Lanka Post — Department of Posts. Smart Post Office Management System.
+                                                </div>
+                                            </div>
+                                        </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+                                        @await RenderSectionAsync("Scripts", required: false)
+                                    </body>
 
-</html>
+                                </html>
