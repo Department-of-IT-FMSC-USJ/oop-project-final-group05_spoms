@@ -56,7 +56,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Card Number</label>
-                        <input name="cardNumber" id="cardNum" class="form-control"   placeholder="1234 5678 9012 3456"
+                        <input name="cardNumber" id="cardNum" class="form-control" placeholder="1234 5678 9012 3456"
                                maxlength="19" required />
                         <div id="cardType" class="mt-1 small text-muted"></div>
                     </div>
@@ -90,6 +90,8 @@
                 </div>
                 <div class="text-center mt-2">
                     <span class="badge bg-secondary me-1">VISA</span>
+                    <span class="badge bg-secondary me-1">MASTERCARD</span>
+                    <span class="badge bg-secondary me-1">AMEX</span>
                 </div>
             </div>
         </div>
@@ -100,19 +102,19 @@
     <script>
 
         document.getElementById('cardNum').addEventListener('input', function () {
-          let v = this.value.replace(/\D/g, '').substring(0, 16);
-          this.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
-          const t = document.getElementById('cardType');
-          if (v.startsWith('4')) t.textContent = '💳 Visa';
-          else if (v.startsWith('5')) t.textContent = '💳 Mastercard';
-          else if (v.startsWith('3')) t.textContent = '💳 American Express';
-          else t.textContent = '';
+            let v = this.value.replace(/\D/g, '').substring(0, 16);
+            this.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+            const t = document.getElementById('cardType');
+            if (v.startsWith('4')) t.textContent = '💳 Visa';
+            else if (v.startsWith('5')) t.textContent = '💳 Mastercard';
+            else if (v.startsWith('3')) t.textContent = '💳 American Express';
+            else t.textContent = '';
         });
 
         document.getElementById('payForm').addEventListener('submit', function () {
-          const btn = document.getElementById('payBtn');
-          btn.disabled = true;
-          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
         });
     </script>
 }
