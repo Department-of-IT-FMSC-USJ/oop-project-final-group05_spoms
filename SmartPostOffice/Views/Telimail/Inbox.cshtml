@@ -7,86 +7,87 @@
     <h2 style="color:var(--sl-navy);"><i class="bi bi-inbox-fill me-2"></i>Telemail Inbox</h2>
     <p class="text-muted mb-0">Paid Telemail messages awaiting forwarding to destination post offices.</p>
   </div>
-  <span class="badge fs-6" style="background:var(--sl-navy);">@Model.Count pending</span>
-</div>
-@if (!Model.Any())
-{
-  <div class="alert alert-info"><i class="bi bi-inbox me-2"></i>No Telemail messages received yet.</div>
-}
-else
-{
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead style="background:var(--sl-navy); color:white;">
-        <tr>
-          <th>Reference</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Destination Office</th>
-          <th>Status</th>
-          <th>Submitted</th>
-          <th>Urgency</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (var m in Model)
-        {
+  <span class="badge fs-6" style="background:var(--sl-navy);">@Model.Count(m => m.MessageStatus == "Submitted")
+    pending</span>
+  </div>
+  @if (!Model.Any())
+  {
+    <div class="alert alert-info"><i class="bi bi-inbox me-2"></i>No Telemail messages received yet.</div>
+  }
+  else
+  {
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead style="background:var(--sl-navy); color:white;">
           <tr>
-            <td class="fw-bold" style="color:var(--sl-navy);">@m.TelimailReference</td>
-            <td>@m.SenderName</td>
-            <td>@m.RecipientName</td>
-            <td>@m.DestinationPostOffice</td>
-            <td>
-              @if (m.MessageStatus == "Submitted")
-              {
-                <span class="badge bg-warning text-dark">Submitted</span>
-              }
-              else if (m.MessageStatus == "Forwarded")
-              {
-
-                <span class="badge bg-info">Forwarded</span>
-              }
-              else
-              {
-
-                <span class="badge bg-success">Delivered</span>
-              }
-            </td>
-            <td class="small text-muted">@m.CreatedAt.ToString("dd MMM HH:mm")</td>
-            <td>
-              @{
-                var mins = (int)(DateTime.Now - m.CreatedAt).TotalMinutes;
-              }
-              @if (m.MessageStatus == "Submitted")
-              {
-                if (mins > 120)
+            <th>Reference</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Destination Office</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Urgency</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var m in Model)
+          {
+            <tr>
+              <td class="fw-bold" style="color:var(--sl-navy);">@m.TelimailReference</td>
+              <td>@m.SenderName</td>
+              <td>@m.RecipientName</td>
+              <td>@m.DestinationPostOffice</td>
+              <td>
+                @if (m.MessageStatus == "Submitted")
                 {
-                  <span class="badge bg-danger">⚠ @mins min — OVERDUE</span>
+                  <span class="badge bg-warning text-dark">Submitted</span>
                 }
-                else if (mins > 60)
+                else if (m.MessageStatus == "Forwarded")
                 {
-                  <span class="badge bg-warning text-dark">⚠ @mins min ago</span>
+
+                  <span class="badge bg-info">Forwarded</span>
                 }
                 else
                 {
-                  <span class="badge bg-success">@mins min ago</span>
+
+                  <span class="badge bg-success">Delivered</span>
                 }
-              }
-              else
-              {
-                <span class="text-muted small">—</span>
-              }
-            </td>
-            <td>
-              <a asp-controller="Telimail" asp-action="Detail" asp-route-id="@m.Id"       class="btn btn-sm"
-                 style="background:var(--sl-navy); color:white;">
-                <i class="bi bi-eye-fill me-1"></i>View & Forward
-              </a>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-}
+              </td>
+              <td class="small text-muted">@m.CreatedAt.ToString("dd MMM HH:mm")</td>
+              <td>
+                @{
+                  var mins = (int)(DateTime.Now - m.CreatedAt).TotalMinutes;
+                }
+                @if (m.MessageStatus == "Submitted")
+                {
+                  if (mins > 120)
+                  {
+                    <span class="badge bg-danger">⚠ @mins min — OVERDUE</span>
+                  }
+                  else if (mins > 60)
+                  {
+                    <span class="badge bg-warning text-dark">⚠ @mins min ago</span>
+                  }
+                  else
+                  {
+                    <span class="badge bg-success">@mins min ago</span>
+                  }
+                }
+                else
+                {
+                  <span class="text-muted small">—</span>
+                }
+              </td>
+              <td>
+                <a asp-controller="Telimail" asp-action="Detail" asp-route-id="@m.Id" class="btn btn-sm"
+                   style="background:var(--sl-navy); color:white;">
+                  <i class="bi bi-eye-fill me-1"></i>View & Forward
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }

@@ -11,7 +11,8 @@
         <h2 style="color:var(--sl-navy);">
             <i class="bi bi-journal-text me-2"></i>Cash Book — @ViewBag.Today
         </h2>
-        <p class="text-muted mb-0">Five postal registers (Cash) · Three online registers (Bungalow, Stamp, Telemail).</p>
+        <p class="text-muted mb-0">Five postal registers (Cash) · Three online registers (Bungalow, Stamp, Telemail).
+        </p>
     </div>
     <div class="d-flex gap-2">
         <a asp-action="DailyReport" class="btn btn-outline-primary">
@@ -97,7 +98,20 @@
                         {
                             <tr>
                                 <td>@entry.EntryDate.ToString("HH:mm")</td>
-                                <td><code>@(entry.Transaction?.ServiceRequest?.ReferenceNumber ?? entry.Transaction?.TrackingNumber ?? "—")</code></td>
+                                <td>
+                                    @if (entry.Transaction?.ServiceRequestId != null)
+                                    {
+                                        <a asp-controller="Counter" asp-action="Receipt"
+                                               asp-route-transactionId="@entry.Transaction!.Id"
+                                               style="color:var(--sl-red); font-family:monospace; font-weight:600;">
+                                            @(entry.Transaction.ServiceRequest?.ReferenceNumber ?? entry.Transaction.TrackingNumber)
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <code class="text-muted">@(entry.Transaction?.TrackingNumber ?? "—")</code>
+                                    }
+                                </td>
                                 <td>
                                     @if (entry.PaymentMethod == "Cash")
                                     {
@@ -128,14 +142,14 @@
             }
 
             <div class="p-3 border-top">
-            @if ((bool)summary.IsOnlineOnly)
-            {
-                <p class="text-muted small mb-0">
-                    <i class="bi bi-info-circle me-1"></i>Online-only register — no physical cash to close.
-                </p>
-            }
-            else if ((bool)summary.IsClosed)
-            {
+                @if ((bool)summary.IsOnlineOnly)
+                {
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-info-circle me-1"></i>Online-only register — no physical cash to close.
+                    </p>
+                }
+                else if ((bool)summary.IsClosed)
+                {
                     var b = summary.Balance;
                     string cls = b.Status == "BALANCED" ? "alert-success" : "alert-warning";
                     <div class="alert @cls mb-0 py-2">

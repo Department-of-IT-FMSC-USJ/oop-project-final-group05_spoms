@@ -52,6 +52,9 @@ public class CounterController : Controller
         ViewBag.TodayOnlineTotal = counterOnline + directOnline;
 
         ViewBag.BungalowBookingsCount = _db.BungalowBookings.Count();
+        
+        ViewBag.TelimailReceivedCount = await _db.TelimailMessages
+            .CountAsync(m => m.PaymentStatus == "Paid");
 
         return View();
     }
